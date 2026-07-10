@@ -3,12 +3,12 @@ import Foundation
 enum Endpoint {
     
 //    case login(mobile: String)
-    case onboarding(index: Int)
+    case onboarding
 
     var path: String {
         switch self {
-        case .onboarding(let index):
-                    return "api/v1/onboarding?index=\(index)"
+        case .onboarding:
+                   return "api/v1/onboarding"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }

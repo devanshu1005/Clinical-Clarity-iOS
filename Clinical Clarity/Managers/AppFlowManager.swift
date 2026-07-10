@@ -2,19 +2,18 @@ import SwiftUI
 import Combine
 
 @MainActor
-class AppFlowManager: ObservableObject {
+final class AppFlowManager: ObservableObject {
     
     enum AppState {
         case splash
         case onboarding
-//        case login
-//        case register
-//        case otp(mobile: String)
-//        case dashboard
-//        case driverHome
+        case login
     }
     
     @Published var state: AppState = .splash
+    
+    // Preloaded onboarding data
+    @Published var onboardingItems: [OnboardingItem] = []
     
     private let authManager: AuthManager
     
@@ -22,19 +21,34 @@ class AppFlowManager: ObservableObject {
         self.authManager = authManager
     }
     
-    func moveToNext() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.checkUserState()
+    // Called from SplashView
+    func prepareInitialFlow() async {
+        do {
+            let response: OnboardingListResponse = try await APIClient.shared.request(
+                endpoint: .onboarding
+            )
+            
+            // Sort by index just to keep order safe
+            onboardingItems = response.data.sorted { $0.index < $1.index }
+            
+            // After onboarding is loaded, move forward
+            let authToken = UserDefaults.standard.string(forKey: "authToken") ?? ""
+            
+            if !authToken.isEmpty {
+                state = .onboarding
+            } else {
+                state = .onboarding
+            }
+            
+        } catch {
+            print("❌ Failed to preload onboarding:", error)
+            
+            // fallback: still move to onboarding if you want
+            state = .onboarding
         }
     }
     
-    private func checkUserState() {
-        
-        if authManager.isLoggedIn {
-            state = .onboarding
-            return
-        } else {
-            state = .onboarding
-        }
+    func moveToLogin() {
+        state = .login
     }
 }

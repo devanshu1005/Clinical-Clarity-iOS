@@ -1,9 +1,10 @@
 import Foundation
 
-struct OnboardingResponse: Decodable {
+struct OnboardingListResponse: Decodable {
     let success: Bool
     let message: String
-    let data: OnboardingItem
+    let count: Int
+    let data: [OnboardingItem]
 }
 
 struct OnboardingItem: Decodable, Identifiable {
