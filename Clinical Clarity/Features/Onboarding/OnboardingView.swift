@@ -14,36 +14,23 @@ struct OnboardingView: View {
             Color.white.ignoresSafeArea()
             
             if items.isEmpty {
-                VStack(spacing: 16) {
-                    Text("No onboarding data available.")
-                        .foregroundColor(.gray)
-//                    
-//                    Button("Retry") {
-//                        appFlow.retryInitialLoad()
-//                    }
-//                    .padding(.horizontal, 20)
-//                    .padding(.vertical, 12)
-//                    .background(Color.blue)
-//                    .foregroundColor(.white)
-//                    .cornerRadius(12)
-                }
-                .padding()
+//                appFlow.moveToLogin()
             } else {
                 VStack(spacing: 0) {
                     
                     Spacer().frame(height: 20)
                     
                     // MARK: - Skip button
-//                    HStack {
-//                        Spacer()
-//                        
-//                        Button("Skip") {
-//                            appFlow.moveToLogin()
-//                        }
-//                        .font(.system(size: 15, weight: .medium))
-//                        .foregroundColor(.gray)
-//                        .padding(.horizontal, 24)
-//                    }
+                    HStack {
+                        Spacer()
+                        
+                        Button("Skip") {
+                            appFlow.moveToLogin()
+                        }
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.gray)
+                        .padding(.horizontal, 24)
+                    }
                     
                     // MARK: - Pager
                     TabView(selection: $currentPage) {
