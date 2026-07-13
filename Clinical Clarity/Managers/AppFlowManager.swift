@@ -8,6 +8,8 @@ final class AppFlowManager: ObservableObject {
         case splash
         case onboarding
         case login
+        case verifyOTP(email: String)
+        case dashboard
     }
     
     @Published var state: AppState = .splash
@@ -50,5 +52,13 @@ final class AppFlowManager: ObservableObject {
     
     func moveToLogin() {
         state = .login
+    }
+    
+    func moveToOTP(email: String) {
+        state = .verifyOTP(email: email)
+    }
+    
+    func moveToDashboard() {
+        state = .dashboard
     }
 }

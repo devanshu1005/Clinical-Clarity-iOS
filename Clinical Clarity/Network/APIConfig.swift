@@ -8,6 +8,7 @@ struct APIConfig {
         [
             "Accept": "application/json",
 //            "authkey": "Apna002Slot$#$HS"
+            "Content-Type": "application/json"
         ]
     }
 }

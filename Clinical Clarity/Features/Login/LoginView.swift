@@ -9,7 +9,9 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @State private var email: String = ""
+    @StateObject private var viewModel = LoginViewModel()
+
+    @EnvironmentObject var appFlow: AppFlowManager
     
     var body: some View {
         ZStack {
@@ -45,6 +47,8 @@ struct LoginView: View {
                 .frame(maxWidth: .infinity)
                 .frame(minHeight: UIScreen.main.bounds.height)
             }
+        }.onTapGesture {
+            hideKeyboard()
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -136,7 +140,7 @@ private extension LoginView {
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     
                     // Email field
-                    TextField("Enter your email", text: $email)
+                    TextField("Enter your email", text: $viewModel.email)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
@@ -156,11 +160,22 @@ private extension LoginView {
             // MARK: - CTA + Trust Text
             VStack(spacing: 16) {
                 BrandedActionButton(
-                       title: "Continue",
-                       suffixIcon: "arrow.right"
-                   ) {
-                       // TODO: Call login API
-                   }
+                    title: viewModel.isLoading ? "Please Wait..." : "Continue",
+                    suffixIcon: viewModel.isLoading ? nil : "arrow.right"
+                ) {
+                    hideKeyboard()
+                    guard !viewModel.isLoading else { return }
+
+                    Task {
+
+                        let success = await viewModel.requestOTP()
+
+                        if success {
+                            appFlow.moveToOTP(email: viewModel.email)
+                        }
+
+                    }
+                }
                 
                 HStack(spacing: 6) {
                     Image(systemName: "lock.fill")
@@ -173,6 +188,14 @@ private extension LoginView {
                 }
                 .opacity(0.7)
                 .frame(maxWidth: .infinity, alignment: .center)
+                
+                if let error = viewModel.errorMessage {
+
+                    Text(error)
+                        .font(.appCaptionMedium)
+                        .foregroundColor(.red)
+                        .padding(.top,8)
+                }
             }
         }
         .padding(24)
@@ -202,7 +225,7 @@ private extension LoginView {
             .opacity(0.5)
             
             VStack(spacing: 24) {
-                Text("Don’t have an account?")
+                Text("Don’t want to sign in?")
                     .font(.appBody)
                     .foregroundColor(Color.textSecondary)
                 
@@ -210,7 +233,7 @@ private extension LoginView {
                     // TODO: Navigate to Sign Up
                 } label: {
                     HStack(spacing: 6) {
-                        Text("Create your account")
+                        Text("Continue as guest")
                             .font(.appLabelBold)
                         
                         Image(systemName: "chevron.right")

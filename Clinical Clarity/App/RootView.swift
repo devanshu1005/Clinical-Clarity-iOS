@@ -19,7 +19,11 @@ struct RootView: View {
 //        case .dashboard:
 //            DashboardView()
             
-       
+        case .verifyOTP(let email):
+            VerifyOTPView(email: email)
+            
+        case .dashboard:
+            DashboardView()
         }
     }
 }
