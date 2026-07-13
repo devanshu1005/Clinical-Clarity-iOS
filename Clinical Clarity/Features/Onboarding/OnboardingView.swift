@@ -11,7 +11,7 @@ struct OnboardingView: View {
     
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.cardBackground.ignoresSafeArea()
             
             if items.isEmpty {
 //                appFlow.moveToLogin()
@@ -27,8 +27,8 @@ struct OnboardingView: View {
                         Button("Skip") {
                             appFlow.moveToLogin()
                         }
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.gray)
+                        .font(.appNavButton)
+                        .foregroundColor(Color.skipButtonText)
                         .padding(.horizontal, 24)
                     }
                     
@@ -54,7 +54,7 @@ struct OnboardingView: View {
                                             .resizable()
                                             .scaledToFit()
                                             .frame(width: 120, height: 120)
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(Color.skipButtonText)
                                     @unknown default:
                                         EmptyView()
                                     }
@@ -63,23 +63,23 @@ struct OnboardingView: View {
                                 Spacer().frame(height: 40)
                                 
                                 Text(item.title)
-                                    .font(.system(size: 28, weight: .bold))
+                                    .font(.appTitle)
                                     .multilineTextAlignment(.center)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color.textOnboardingTitle)
                                     .padding(.horizontal, 24)
                                 
                                 Spacer().frame(height: 16)
                                 
                                 Text(item.subtitle)
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.gray)
+                                    .font(.appBody)
+                                    .foregroundColor(Color.textOnboardingSubtitle)
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal, 28)
                                 
                                 if item.isComingSoon {
                                     Text("Coming Soon")
-                                        .font(.system(size: 13, weight: .semibold))
-                                        .foregroundColor(.orange)
+                                        .font(.appCaption)
+                                        .foregroundColor(Color.statusComingSoon)
                                         .padding(.top, 14)
                                 }
                                 
@@ -95,24 +95,19 @@ struct OnboardingView: View {
                         HStack(spacing: 8) {
                             ForEach(0..<items.count, id: \.self) { index in
                                 Capsule()
-                                    .fill(index == currentPage ? Color.blue : Color.gray.opacity(0.3))
+                                    .fill(index == currentPage ? Color.pageIndicatorActive : Color.pageIndicatorInactive)
                                     .frame(width: index == currentPage ? 24 : 8, height: 8)
                                     .animation(.easeInOut, value: currentPage)
                             }
                         }
                         
-                        Button {
+                        BrandedActionButton(
+                            title: currentPage == items.count - 1 ? "Get Started" : "Next",
+                            suffixIcon: "arrow.right"
+                        ) {
                             handleNext()
-                        } label: {
-                            Text(currentPage == items.count - 1 ? "Get Started" : "Next")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 54)
-                                .background(Color.blue)
-                                .cornerRadius(16)
-                                .padding(.horizontal, 24)
                         }
+                        .padding(.horizontal, 24)
                     }
                     .padding(.bottom, 32)
                 }
@@ -129,4 +124,9 @@ struct OnboardingView: View {
             appFlow.moveToLogin()
         }
     }
+}
+
+
+#Preview {
+    OnboardingView()
 }
