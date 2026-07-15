@@ -6,7 +6,7 @@ enum Endpoint {
     case onboarding
     case requestOTP
     case verifyOTP
-
+    case dashboard(latitude: Double, longitude: Double)
 
     var path: String {
         switch self {
@@ -16,6 +16,8 @@ enum Endpoint {
                     return "api/v1/auth/request-otp"
         case .verifyOTP:
                 return "api/v1/auth/verify-otp"
+        case .dashboard(let latitude, let longitude):
+            return "api/v1/dashboard?latitude=\(latitude)&longitude=\(longitude)"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }
@@ -27,7 +29,7 @@ enum Endpoint {
 //            return .POST
         case .requestOTP, .verifyOTP:
                    return .POST
-        case .onboarding:
+        case .onboarding, .dashboard:
             return .GET
         }
     }

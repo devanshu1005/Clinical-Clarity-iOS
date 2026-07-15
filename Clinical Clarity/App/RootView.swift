@@ -16,14 +16,11 @@ struct RootView: View {
         case .login:
             LoginView()
             
-//        case .dashboard:
-//            DashboardView()
-            
         case .verifyOTP(let email):
             VerifyOTPView(email: email)
             
         case .dashboard:
-            DashboardView()
+            MainContainerView()
         }
     }
 }

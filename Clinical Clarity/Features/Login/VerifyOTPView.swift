@@ -10,6 +10,7 @@ struct VerifyOTPView: View {
     let email: String
 
     @EnvironmentObject var appFlow: AppFlowManager
+    @EnvironmentObject var authManager: AuthManager
     @Environment(\.dismiss) private var dismiss
 
     @StateObject private var viewModel = VerifyOTPViewModel()
@@ -206,7 +207,8 @@ struct VerifyOTPView: View {
                             Task {
                                 
                                 let success = await viewModel.verifyOTP(
-                                    email: email
+                                    email: email,
+                                    authManager: authManager
                                 )
                                 
                                 if success {

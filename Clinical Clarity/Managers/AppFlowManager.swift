@@ -36,10 +36,19 @@ final class AppFlowManager: ObservableObject {
             // After onboarding is loaded, move forward
             let authToken = UserDefaults.standard.string(forKey: "authToken") ?? ""
             
+            print("authToken while prepareInitialFlow: $authToken")
+            
             if !authToken.isEmpty {
-                state = .onboarding
+                state = .dashboard
             } else {
-                state = .onboarding
+                let hasViewedOnboarding = UserDefaults.standard.bool(forKey: "hasViewedOnboarding")
+                if hasViewedOnboarding {
+                    state = .login
+                    return
+                }else{
+                    state = .onboarding
+                }
+                
             }
             
         } catch {

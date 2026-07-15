@@ -47,24 +47,50 @@ final class APIClient {
         print("👉 Headers:", finalHeaders)
         
         // MARK: - API Call
+        // MARK: - API Call
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+
         // MARK: - Response Check
         guard let httpResponse = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
-        
+
+        print("========================================")
+        print("👉 URL:", request.url?.absoluteString ?? "")
+        print("👉 Method:", request.httpMethod ?? "")
         print("👉 Status Code:", httpResponse.statusCode)
-        
+
+        if let body = request.httpBody,
+           let bodyString = String(data: body, encoding: .utf8) {
+            print("👉 Request Body:")
+            print(bodyString)
+        }
+
+        print("👉 Response Body:")
+        print(String(data: data, encoding: .utf8) ?? "No Response")
+
+        print("========================================")
+
         guard (200...299).contains(httpResponse.statusCode) else {
             throw APIError.serverError(httpResponse.statusCode)
         }
-        
+
         // MARK: - Decode
         do {
-            return try JSONDecoder().decode(T.self, from: data)
+
+            let decoded = try JSONDecoder().decode(T.self, from: data)
+
+            print("✅ Decoded Model:")
+            print(decoded)
+
+            return decoded
+
         } catch {
+
             print("❌ Decoding Error:", error)
+            print("❌ Raw JSON:")
+            print(String(data: data, encoding: .utf8) ?? "")
+
             throw APIError.decodingError
         }
     }

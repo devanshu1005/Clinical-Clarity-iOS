@@ -121,6 +121,7 @@ struct OnboardingView: View {
                 currentPage += 1
             }
         } else {
+            UserDefaults.standard.set(true, forKey: "hasViewedOnboarding")
             appFlow.moveToLogin()
         }
     }

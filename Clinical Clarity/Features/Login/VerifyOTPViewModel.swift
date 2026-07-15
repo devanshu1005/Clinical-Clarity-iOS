@@ -10,12 +10,12 @@ import Combine
 
 @MainActor
 final class VerifyOTPViewModel: ObservableObject {
-
+    
     @Published var otp = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    func verifyOTP(email: String) async -> Bool {
+    func verifyOTP(email: String,  authManager: AuthManager ) async -> Bool {
 
         guard otp.count == 6 else {
             errorMessage = "Please enter a valid 6-digit OTP."
@@ -38,21 +38,23 @@ final class VerifyOTPViewModel: ObservableObject {
                     body: body
                 )
 
-            // Save auth token
-            UserDefaults.standard.set(
-                response.data.token,
-                forKey: "authToken"
-            )
+//            // Save auth token
+//            UserDefaults.standard.set(
+//                response.data.token,
+//                forKey: "authToken"
+//            )
+//            
+//            UserDefaults.standard.set(
+//                response.data.user.email,
+//                forKey: "userEmail"
+//            )
+//
+//            UserDefaults.standard.set(
+//                response.data.isNewUser,
+//                forKey: "isNewUser"
+//            )
             
-            UserDefaults.standard.set(
-                response.data.user.email,
-                forKey: "userEmail"
-            )
-
-            UserDefaults.standard.set(
-                response.data.isNewUser,
-                forKey: "isNewUser"
-            )
+            authManager.saveSession(token: response.data.token, email: response.data.user.email, isNewUser: response.data.isNewUser)
 
             isLoading = false
 
