@@ -46,7 +46,9 @@ struct DoctorSearchView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            Task {
+
+                try? await Task.sleep(for: .milliseconds(250))
 
                 isSearchFocused = true
             }

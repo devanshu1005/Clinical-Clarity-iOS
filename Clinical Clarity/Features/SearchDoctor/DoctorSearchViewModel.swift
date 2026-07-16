@@ -22,7 +22,7 @@ final class DoctorSearchViewModel: ObservableObject {
             in: .whitespacesAndNewlines
         )
 
-        guard !query.isEmpty else {
+        guard query.count >= 2 else {
 
             doctors = []
 
