@@ -8,6 +8,7 @@ import SwiftUI
 struct DashboardView: View {
 
     @ObservedObject var viewModel: DashboardViewModel
+    @EnvironmentObject private var navigationManager: NavigationManager
 
     @State private var searchText = ""
 
@@ -310,7 +311,9 @@ private extension DashboardView {
 
                             PopularDoctorCard(doctor: doctor) {
 
-                                print("Open Doctor")
+                                navigationManager.push(
+                                      .doctorDetails(id: doctor.id)
+                                      )
                             }
                         }
                     }

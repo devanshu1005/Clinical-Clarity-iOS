@@ -12,11 +12,15 @@ struct Clinical_ClarityApp: App {
     
     @StateObject private var authManager: AuthManager
     @StateObject private var appFlow: AppFlowManager
+    @StateObject private var navigationManager: NavigationManager
     
     init() {
         let auth = AuthManager()
         _authManager = StateObject(wrappedValue: auth)
         _appFlow = StateObject(wrappedValue: AppFlowManager(authManager: auth))
+        _navigationManager = StateObject(
+                  wrappedValue: NavigationManager()
+              )
     }
     
     var body: some Scene {
@@ -24,6 +28,7 @@ struct Clinical_ClarityApp: App {
             RootView()
                 .environmentObject(authManager)
                 .environmentObject(appFlow)
+                .environmentObject(navigationManager)
         }
     }
 }
