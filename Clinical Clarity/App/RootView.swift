@@ -41,6 +41,14 @@ struct RootView: View {
                     DoctorDetailsView(
                         doctorId: doctorId
                     )
+                    
+                case .doctorList(let specialization):
+                    DoctorListView(
+                        specialization: specialization
+                    )
+                    
+                case .doctorSearch:
+                    DoctorSearchView()
 //
 //                case .clinicDetails(let clinicId):
 //                    ClinicDetailsView(

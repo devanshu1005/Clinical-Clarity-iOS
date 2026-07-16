@@ -8,6 +8,10 @@
 enum AppRoute: Hashable {
 
     case doctorDetails(id: String)
+    
+    case doctorList(specialization: String)
+    
+    case doctorSearch
 //
 //    case clinicDetails(id: String)
 //

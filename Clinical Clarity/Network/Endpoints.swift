@@ -7,6 +7,7 @@ enum Endpoint {
     case requestOTP
     case verifyOTP
     case dashboard(latitude: Double, longitude: Double)
+    case searchDoctors(query: String)
 
     var path: String {
         switch self {
@@ -18,6 +19,14 @@ enum Endpoint {
                 return "api/v1/auth/verify-otp"
         case .dashboard(let latitude, let longitude):
             return "api/v1/dashboard?latitude=\(latitude)&longitude=\(longitude)"
+        case .searchDoctors(let query):
+
+            let encoded =
+                query.addingPercentEncoding(
+                    withAllowedCharacters: .urlQueryAllowed
+                ) ?? ""
+
+            return "api/v1/doctors/search?q=\(encoded)"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }
@@ -29,7 +38,7 @@ enum Endpoint {
 //            return .POST
         case .requestOTP, .verifyOTP:
                    return .POST
-        case .onboarding, .dashboard:
+        case .onboarding, .dashboard, .searchDoctors:
             return .GET
         }
     }

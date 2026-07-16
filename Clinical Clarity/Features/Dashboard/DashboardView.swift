@@ -117,29 +117,36 @@ private extension DashboardView {
 
     var searchBar: some View {
 
-        HStack(spacing:12){
+        Button {
 
-            Image(systemName:"magnifyingglass")
-                .foregroundColor(.textSecondary)
+            navigationManager.push(.doctorSearch)
 
-            TextField(
-                "Search doctors, clinics...",
-                text:$searchText
+        } label: {
+
+            HStack(spacing: 12) {
+
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.textSecondary)
+
+                Text("Search doctors, clinics...")
+                    .font(.appBody)
+                    .foregroundColor(.textSecondary)
+
+                Spacer()
+            }
+            .padding(.horizontal, 18)
+            .frame(height: 56)
+            .background(Color.cardBackground)
+            .overlay {
+
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.borderDefault)
+            }
+            .clipShape(
+                RoundedRectangle(cornerRadius: 16)
             )
-            .font(.appBody)
-
         }
-        .padding(.horizontal,18)
-        .frame(height:56)
-        .background(Color.cardBackground)
-        .overlay{
-
-            RoundedRectangle(cornerRadius:16)
-                .stroke(Color.borderDefault)
-        }
-        .clipShape(
-            RoundedRectangle(cornerRadius:16)
-        )
+        .buttonStyle(.plain)
     }
 
     var specializationSection: some View {
@@ -189,20 +196,30 @@ private extension DashboardView {
 
                         ForEach(values,id:\.self){ specialization in
 
-                            Text(specialization)
-                                .font(.appLabel)
-                                .foregroundColor(.brandPrimary)
-                                .padding(.horizontal,18)
-                                .frame(height:42)
-                                .background(Color.white)
-                                .overlay{
+                            Button {
 
-                                    Capsule()
-                                        .stroke(
-                                            Color.borderDefault
-                                        )
-                                }
-                                .clipShape(Capsule())
+                                navigationManager.push(
+                                    .doctorList(
+                                        specialization: specialization
+                                    )
+                                )
+
+                            } label: {
+
+                                Text(specialization)
+                                    .font(.appLabel)
+                                    .foregroundColor(.brandPrimary)
+                                    .padding(.horizontal,18)
+                                    .frame(height:42)
+                                    .background(Color.white)
+                                    .overlay {
+
+                                        Capsule()
+                                            .stroke(Color.borderDefault)
+                                    }
+                                    .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -232,20 +249,26 @@ private extension DashboardView {
         return AnyView(
 
             VStack(alignment: .leading, spacing: 20) {
+                if(appointments.isEmpty ){
+                    EmptyView()
+                }else{
+                    HStack {
 
-                HStack {
+                        Text(section.title)
+                            .font(.appBodySemibold)
 
-                    Text(section.title)
-                        .font(.appBodySemibold)
+                        Spacer()
 
-                    Spacer()
+                        Button("See All") {
 
-                    Button("See All") {
-
+                        }
+                        .font(.appLabelBold)
+                        .foregroundColor(.brandPrimary)
                     }
-                    .font(.appLabelBold)
-                    .foregroundColor(.brandPrimary)
                 }
+                
+
+               
 
                 LazyVStack(spacing: 16) {
 
