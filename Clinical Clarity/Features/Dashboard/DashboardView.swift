@@ -211,22 +211,21 @@ private extension DashboardView {
     
     var upcomingAppointmentSection: some View {
 
-        guard let section = viewModel.sections.section(type: "UPCOMING_APPOINTMENTS")
-        else {
+        guard let section = viewModel.sections.section(
+            type: "UPCOMING_APPOINTMENTS"
+        ) else {
+
             return AnyView(EmptyView())
         }
 
-        guard let appointment = section.items.compactMap({
+        let appointments = section.items.compactMap {
 
             if case let .appointment(value) = $0 {
+
                 return value
             }
 
             return nil
-
-        }).first else {
-
-            return AnyView(EmptyView())
         }
 
         return AnyView(
@@ -237,7 +236,6 @@ private extension DashboardView {
 
                     Text(section.title)
                         .font(.appBodySemibold)
-                        .foregroundColor(.textPrimary)
 
                     Spacer()
 
@@ -248,82 +246,19 @@ private extension DashboardView {
                     .foregroundColor(.brandPrimary)
                 }
 
-                VStack(spacing: 20) {
+                LazyVStack(spacing: 16) {
 
-                    HStack(alignment: .top, spacing: 16) {
+                    ForEach(appointments, id: \.id) { appointment in
 
-                        AsyncImage(
-                            url: URL(
-                                string: appointment.doctorId.profileImage ?? ""
-                            )
-                        ) { image in
+                        AppointmentCard(
+                            appointment: appointment,
+                            buttonTitle: "View Appointment"
+                        ) {
 
-                            image
-                                .resizable()
-                                .scaledToFill()
-
-                        } placeholder: {
-
-                            Circle()
-                                .fill(Color.brandAccentBlue)
+                            print("Open Appointment Details")
                         }
-                        .frame(width: 70, height: 70)
-                        .clipShape(Circle())
-
-                        VStack(alignment: .leading, spacing: 6) {
-
-                            Text(appointment.doctorId.name)
-                                .font(.appBodySemibold)
-                                .foregroundColor(.textPrimary)
-
-                            Text(appointment.doctorId.specialization)
-                                .font(.appLabel)
-                                .foregroundColor(.textSecondary)
-
-                            Text(appointment.clinicId.name)
-                                .font(.appCaptionMedium)
-                                .foregroundColor(.textSecondary)
-                        }
-
-                        Spacer()
-                    }
-
-                    Divider()
-
-                    HStack {
-
-                        Label(
-                            appointment.appointmentDate,
-                            systemImage: "calendar"
-                        )
-                        .font(.appCaptionMedium)
-
-                        Spacer()
-
-                        Label(
-                            "\(appointment.startTime) - \(appointment.endTime)",
-                            systemImage: "clock"
-                        )
-                        .font(.appCaptionMedium)
-                    }
-
-                    BrandedActionButton(
-                        title: "View Appointment",
-                        suffixIcon: "arrow.right"
-                    ) {
-
                     }
                 }
-                .padding(20)
-                .background(Color.cardBackground)
-                .overlay {
-
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(Color.borderDefault)
-                }
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 24)
-                )
             }
         )
     }
