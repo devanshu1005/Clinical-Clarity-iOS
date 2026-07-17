@@ -16,8 +16,14 @@ struct Doctor: Decodable {
     let qualification: String?
 
     let experienceYears: Int?
+    
+    let consultationFee: Int?
 
     let profileImage: String?
+    
+    let bio: String?
+
+    let languages: [String]?
 
     let averageRating: Double?
 
@@ -35,7 +41,10 @@ struct Doctor: Decodable {
         case specialization
         case qualification
         case experienceYears
+        case consultationFee
         case profileImage
+        case bio
+        case languages
         case averageRating
         case totalReviews
         case clinics

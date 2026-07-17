@@ -29,7 +29,7 @@ struct StatCard: View {
                 .multilineTextAlignment(.center)
 
             Text(value)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.textPrimary)
                 .multilineTextAlignment(.center)
         }

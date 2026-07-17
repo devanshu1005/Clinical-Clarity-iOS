@@ -40,7 +40,7 @@ struct DoctorDetailsView: View {
 
                 Text(error)
 
-            } else if let doctor = viewModel.doctor {
+            } else if viewModel.doctor != nil {
 
                 ScrollView(showsIndicators: false) {
 
@@ -102,7 +102,7 @@ private extension DoctorDetailsView {
                         .foregroundColor(.brandPrimary)
                         .multilineTextAlignment(.center)
 
-                    Text("\(doctor.experienceYears) Years Experience" ?? "")
+                    Text("\(doctor.experienceYears ?? 0) Years Experience")
                         .font(.appBody)
                         .foregroundColor(.textSecondary)
 
@@ -249,24 +249,21 @@ private extension DoctorDetailsView {
             HStack(spacing: 12) {
 
                 StatCard(
-                    icon: "stethoscope",
-                    title: "Experience",
-                    value: "\(doctor.experienceYears) yrs"
+                    icon: "globe",
+                    title: "Languages",
+                    value: doctor.languages?.joined(separator: ", ") ?? "N/A"
+                )
+
+                StatCard(
+                    icon: "indianrupeesign.circle.fill",
+                    title: "Consultation",
+                    value: "₹\(doctor.consultationFee ?? 0)"
                 )
 
                 StatCard(
                     icon: "star.fill",
-                    title: "Rating",
-                    value: String(
-                        format: "%.1f",
-                        doctor.averageRating ?? 00
-                    )
-                )
-
-                StatCard(
-                    icon: "person.2.fill",
-                    title: "Reviews",
-                    value: "\(doctor.totalReviews)"
+                    title: "Ratings",
+                    value: "\(doctor.averageRating ?? 0.0)"
                 )
             }
         }
@@ -287,14 +284,14 @@ private extension DoctorDetailsView {
 
                 sectionTitle("About Doctor")
 
-//                Text(doctor.bio)
-//                    .font(.appBody)
-//                    .foregroundColor(.textSecondary)
-//                    .lineSpacing(8)
-//                    .fixedSize(
-//                        horizontal: false,
-//                        vertical: true
-//                    )
+                Text(doctor.bio ?? "")
+                    .font(.appBody)
+                    .foregroundColor(.textSecondary)
+                    .lineSpacing(8)
+                    .fixedSize(
+                        horizontal: false,
+                        vertical: true
+                    )
             }
             .frame(maxWidth: .infinity,
                    alignment: .leading)
@@ -387,15 +384,13 @@ private extension DoctorDetailsView {
             spacing: 4
         ) {
 
-            Text("Clinic information coming soon")
+            Text(viewModel.doctor?.clinics?.first?.name ?? "Clinic not available")
                 .font(.headline)
                 .foregroundColor(.textPrimary)
 
-            Text(
-                "This doctor's clinic details will appear here once available."
-            )
-            .font(.appBody)
-            .foregroundColor(.textSecondary)
+            Text(viewModel.doctor?.clinics?.first?.shortAddress ?? "")
+                .font(.appBody)
+                .foregroundColor(.textSecondary)
         }
     }
 }

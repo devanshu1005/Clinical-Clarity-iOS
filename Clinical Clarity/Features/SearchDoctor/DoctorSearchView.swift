@@ -233,7 +233,7 @@ private extension DoctorSearchView {
 
                         address: doctor.clinics?.first?.shortAddress,
 
-                        consultationFee: nil,
+                        consultationFee: doctor.consultationFee,
 
                         buttonTitle: "View Profile"
 
