@@ -24,6 +24,8 @@ struct Doctor: Decodable {
     let totalReviews: Int?
 
     let clinics: [Clinic]?
+    
+    let availability: DoctorAvailability?
 
     enum CodingKeys: String, CodingKey {
 
@@ -37,5 +39,26 @@ struct Doctor: Decodable {
         case averageRating
         case totalReviews
         case clinics
+        case availability
     }
+}
+
+
+struct DoctorAvailability: Decodable {
+
+    let workingDays: [String]
+    let startTime: String
+    let endTime: String
+    let slotDuration: Int
+}
+
+struct DoctorSlot: Decodable, Identifiable {
+
+    var id: String {
+
+        start
+    }
+
+    let start: String
+    let end: String
 }

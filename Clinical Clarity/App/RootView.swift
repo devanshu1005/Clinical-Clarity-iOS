@@ -49,42 +49,6 @@ struct RootView: View {
                     
                 case .doctorSearch:
                     DoctorSearchView()
-//
-//                case .clinicDetails(let clinicId):
-//                    ClinicDetailsView(
-//                        clinicId: clinicId
-//                    )
-//
-//                case .appointmentDetails(let appointmentId):
-//                    AppointmentDetailsView(
-//                        appointmentId: appointmentId
-//                    )
-//
-//                case .bookAppointment(let doctorId):
-//                    BookAppointmentView(
-//                        doctorId: doctorId
-//                    )
-//
-//                case .searchDoctors:
-//                    SearchDoctorsView()
-//
-//                case .searchClinics:
-//                    SearchClinicsView()
-//
-//                case .notifications:
-//                    NotificationView()
-//
-//                case .profile:
-//                    ProfileView()
-//
-//                case .editProfile:
-//                    EditProfileView()
-//
-//                case .medicalRecords:
-//                    MedicalRecordsView()
-//
-//                case .prescriptions:
-//                    PrescriptionView()
                 }
             }
         }

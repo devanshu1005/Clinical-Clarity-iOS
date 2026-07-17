@@ -8,6 +8,10 @@ enum Endpoint {
     case verifyOTP
     case dashboard(latitude: Double, longitude: Double)
     case searchDoctors(query: String)
+    case doctorDetails(
+        id: String,
+        date: String
+    )
 
     var path: String {
         switch self {
@@ -27,6 +31,8 @@ enum Endpoint {
                 ) ?? ""
 
             return "api/v1/doctors/search?q=\(encoded)"
+        case .doctorDetails(let id, let date):
+            return "api/v1/doctors/\(id)?date=\(date)"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }
@@ -38,7 +44,7 @@ enum Endpoint {
 //            return .POST
         case .requestOTP, .verifyOTP:
                    return .POST
-        case .onboarding, .dashboard, .searchDoctors:
+        case .onboarding, .dashboard, .searchDoctors, .doctorDetails:
             return .GET
         }
     }
