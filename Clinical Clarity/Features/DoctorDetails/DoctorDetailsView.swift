@@ -53,6 +53,32 @@ struct DoctorDetailsView: View {
                         aboutSection
                         clinicSection
                         bookingSection
+                        
+                        
+                        if viewModel.isLoadingSlots {
+
+                            VStack {
+                                Spacer()
+
+                                ProgressView("Loading available slots...")
+                                    .progressViewStyle(.circular)
+
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 380) // Match your booking section's approximate height
+                            .background(Color.cardBackground)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+
+                        } else if let error = viewModel.errorMessageSlots {
+
+                            Text(error)
+
+                        } else if viewModel.doctor?.availability != nil {
+
+                            slotSection
+                            
+                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 24)
@@ -614,7 +640,6 @@ private extension DoctorDetailsView {
     }
 }
 
-
 private extension DoctorDetailsView {
 
     var bookingSection: some View {
@@ -636,17 +661,35 @@ private extension DoctorDetailsView {
             }
 
             dateSelector
+        }
+        }
+    }
+
+private extension DoctorDetailsView {
+
+    var slotSection: some View {
+
+        VStack(
+            alignment: .leading,
+            spacing: 24
+        ) {
 
             slotSection(
                 title: "Morning",
-                icon: "sun.max.fill",
+                icon: "sunrise.fill",
                 slots: morningSlots
             )
 
             slotSection(
                 title: "Afternoon",
-                icon: "sun.max",
+                icon: "sun.max.fill",
                 slots: afternoonSlots
+            )
+
+            slotSection(
+                title: "Evening",
+                icon: "moon.stars.fill",
+                slots: eveningSlots
             )
         }
         }
@@ -682,7 +725,7 @@ private extension DoctorDetailsView {
 
                         Task {
 
-                            await viewModel.loadDoctor(
+                            await viewModel.loadDoctorAvailability(
                                 for: date
                             )
                         }
@@ -699,9 +742,7 @@ private extension DoctorDetailsView {
     var morningSlots: [DoctorSlot] {
 
         viewModel.slots.filter {
-
             let hour = Int($0.start.prefix(2)) ?? 0
-
             return hour < 12
         }
     }
@@ -709,10 +750,16 @@ private extension DoctorDetailsView {
     var afternoonSlots: [DoctorSlot] {
 
         viewModel.slots.filter {
-
             let hour = Int($0.start.prefix(2)) ?? 0
+            return hour >= 12 && hour < 17
+        }
+    }
 
-            return hour >= 12
+    var eveningSlots: [DoctorSlot] {
+
+        viewModel.slots.filter {
+            let hour = Int($0.start.prefix(2)) ?? 0
+            return hour >= 17
         }
     }
 }

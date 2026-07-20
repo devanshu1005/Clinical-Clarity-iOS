@@ -19,8 +19,12 @@ final class DoctorDetailsViewModel: ObservableObject {
     var selectedSlot: DoctorSlot?
 
     @Published var isLoading = false
+    
+    @Published var isLoadingSlots = false
 
     @Published var errorMessage: String?
+    
+    @Published var errorMessageSlots: String?
 
     private let doctorId: String
 
@@ -73,6 +77,41 @@ final class DoctorDetailsViewModel: ObservableObject {
         } catch {
 
             errorMessage = error.localizedDescription
+        }
+    }
+    
+    func loadDoctorAvailability(
+        for date: Date? = nil
+    ) async {
+
+        isLoadingSlots = true
+        errorMessageSlots = nil
+
+        defer {
+
+            isLoadingSlots = false
+        }
+
+        do {
+
+            let selected = Self.currentDate(
+                from: date ?? selectedDate
+            )
+
+            let response: DoctorDetailsResponse =
+                try await APIClient.shared.request(
+                    endpoint: .doctorDetails(
+                        id: doctorId,
+                        date: selected
+                    )
+                )
+
+//            doctor = response.data.doctor
+            slots = response.data.availableSlots
+
+        } catch {
+
+            errorMessageSlots = error.localizedDescription
         }
     }
 
