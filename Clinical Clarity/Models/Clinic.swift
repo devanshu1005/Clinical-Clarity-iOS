@@ -20,6 +20,8 @@ struct Clinic: Decodable {
     let doctorPreviewImages: [String]?
 
     let distanceInKm: Double?
+    
+    let location: ClinicLocation?
 
     enum CodingKeys: String, CodingKey {
 
@@ -31,5 +33,22 @@ struct Clinic: Decodable {
         case doctorCount
         case doctorPreviewImages
         case distanceInKm
+        case location
+    }
+}
+
+struct ClinicLocation: Decodable {
+
+    let type: String
+
+    /// GeoJSON format: [longitude, latitude]
+    let coordinates: [Double]
+
+    var longitude: Double? {
+        coordinates.count > 0 ? coordinates[0] : nil
+    }
+
+    var latitude: Double? {
+        coordinates.count > 1 ? coordinates[1] : nil
     }
 }

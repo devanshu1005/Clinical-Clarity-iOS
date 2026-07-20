@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct DoctorDetailsView: View {
 
     let doctorId: String
+    @State private var showMapsOptions = false
 
     @StateObject
     private var viewModel: DoctorDetailsViewModel
@@ -59,6 +61,23 @@ struct DoctorDetailsView: View {
                     bookingBottomBar
                 }
             }
+        }.confirmationDialog(
+            "Open in Maps",
+            isPresented: $showMapsOptions,
+            titleVisibility: .visible
+        ) {
+
+            Button("Apple Maps") {
+
+                openAppleMaps()
+            }
+
+            Button("Google Maps") {
+
+                openGoogleMaps()
+            }
+
+            Button("Cancel", role: .cancel) {}
         }
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -397,77 +416,200 @@ private extension DoctorDetailsView {
 
 private extension DoctorDetailsView {
 
-    var clinicLocationRow: some View {
+    func formattedWorkingDays(_ days: [String]) -> String {
 
-        HStack(alignment: .top, spacing: 12) {
-
-            Image(systemName: "location.fill")
-                .foregroundColor(.brandPrimary)
-
-            VStack(
-                alignment: .leading,
-                spacing: 2
-            ) {
-
-                Text("Location")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.textPrimary)
-
-                Text("Distance unavailable")
-                    .font(.caption)
-                    .foregroundColor(.textSecondary)
-            }
-
-            Spacer()
+        if days.count == 5 &&
+            days == ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] {
+            return "Monday - Friday"
         }
-        .padding(12)
-        .background(
-            Color.white.opacity(0.6)
-        )
-        .clipShape(
-            RoundedRectangle(cornerRadius: 8)
-        )
+
+        return days.joined(separator: ", ")
+    }
+
+    func formattedTime(_ time: String) -> String {
+
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "HH:mm"
+
+        guard let date = inputFormatter.date(from: time) else {
+            return time
+        }
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "h:mm a"
+
+        return outputFormatter.string(from: date)
     }
 }
 
 private extension DoctorDetailsView {
 
-    var clinicMap: some View {
+    var clinicLocationRow: some View {
 
-        ZStack(alignment: .bottomTrailing) {
+        HStack(alignment: .top, spacing: 12) {
 
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.brandPrimary.opacity(0.08))
-                .frame(height: 160)
+            Image(systemName: "clock.fill")
+                .foregroundColor(.brandPrimary)
 
-            VStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
 
-                Image(systemName: "map.fill")
-                    .font(.system(size: 36))
-                    .foregroundColor(.brandPrimary)
+                Text("Clinic Hours")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.textPrimary)
 
-                Text("Map Preview")
-                    .font(.headline)
+                if let availability = viewModel.doctor?.availability {
 
-                Text("Available when clinic coordinates are provided")
-                    .font(.caption)
-                    .foregroundColor(.textSecondary)
+                    Text(formattedWorkingDays(availability.workingDays))
+                        .font(.caption)
+                        .foregroundColor(.textSecondary)
+
+                    Text("\(formattedTime(availability.startTime)) - \(formattedTime(availability.endTime))")
+                        .font(.caption)
+                        .foregroundColor(.textSecondary)
+
+                } else {
+
+                    Text("Schedule unavailable")
+                        .font(.caption)
+                        .foregroundColor(.textSecondary)
+                }
             }
 
-            Text("MAP")
-                .font(.caption2.bold())
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(Color.white)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 4)
-                )
-                .overlay {
+            Spacer()
+        }
+        .padding(12)
+        .background(Color.white.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+}
 
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(Color.borderDefault)
+private struct ClinicAnnotation: Identifiable {
+
+    let id: String
+    let coordinate: CLLocationCoordinate2D
+}
+
+
+private extension DoctorDetailsView {
+    
+    private func openGoogleMaps() {
+
+        guard
+            let clinic = viewModel.doctor?.clinics?.first,
+            let location = clinic.location,
+            let latitude = location.latitude,
+            let longitude = location.longitude
+        else {
+            return
+        }
+
+        guard let url = URL(
+            string:
+            "comgooglemaps://?daddr=\(latitude),\(longitude)&directionsmode=driving"
+        ) else {
+            return
+        }
+
+        UIApplication.shared.open(url)
+    }
+    
+    private func openAppleMaps() {
+
+        guard
+            let clinic = viewModel.doctor?.clinics?.first,
+            let location = clinic.location,
+            let latitude = location.latitude,
+            let longitude = location.longitude
+        else {
+            return
+        }
+
+        let coordinate = CLLocationCoordinate2D(
+            latitude: latitude,
+            longitude: longitude
+        )
+
+        let mapItem = MKMapItem(
+            placemark: MKPlacemark(coordinate: coordinate)
+        )
+
+        mapItem.name = clinic.name
+
+        mapItem.openInMaps(
+            launchOptions: [
+                MKLaunchOptionsDirectionsModeKey:
+                    MKLaunchOptionsDirectionsModeDriving
+            ]
+        )
+    }
+
+    var clinicMap: some View {
+
+        Group {
+
+            if let clinic = viewModel.doctor?.clinics?.first,
+               let location = clinic.location,
+               let latitude = location.latitude,
+               let longitude = location.longitude {
+
+                Button {
+
+                    if UIApplication.shared.canOpenURL(URL(string: "comgooglemaps://")!) {
+
+                        showMapsOptions = true
+
+                    } else {
+
+                        openAppleMaps()
+                    }
+
+                } label: {
+
+                    Map(
+                        coordinateRegion: .constant(
+                            MKCoordinateRegion(
+                                center: CLLocationCoordinate2D(
+                                    latitude: latitude,
+                                    longitude: longitude
+                                ),
+                                span: MKCoordinateSpan(
+                                    latitudeDelta: 0.01,
+                                    longitudeDelta: 0.01
+                                )
+                            )
+                        ),
+                        annotationItems: [
+                            ClinicAnnotation(
+                                id: clinic.id,
+                                coordinate: CLLocationCoordinate2D(
+                                    latitude: latitude,
+                                    longitude: longitude
+                                )
+                            )
+                        ]
+                    ) { item in
+
+                        MapMarker(
+                            coordinate: item.coordinate,
+                            tint: .red
+                        )
+                    }
+                    .frame(height: 180)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .padding(8)
+                .buttonStyle(.plain)
+
+            } else {
+
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.brandPrimary.opacity(0.08))
+                    .frame(height: 180)
+                    .overlay {
+
+                        Text("Location unavailable")
+                            .foregroundColor(.textSecondary)
+                    }
+            }
         }
     }
 }
