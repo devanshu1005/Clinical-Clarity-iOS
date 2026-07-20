@@ -228,20 +228,29 @@ private extension DoctorDetailsView {
 
     var availabilityBadge: some View {
 
-        HStack(spacing: 6) {
+        let isAvailable = !(morningSlots.isEmpty &&
+                            afternoonSlots.isEmpty &&
+                            eveningSlots.isEmpty)
 
-            Image(systemName: "checkmark.circle.fill")
+        return HStack(spacing: 6) {
+
+            Image(systemName: isAvailable
+                  ? "checkmark.circle.fill"
+                  : "xmark.circle.fill")
                 .font(.system(size: 12))
-                .foregroundColor(.white)
 
-            Text("Available Today")
+            Text(isAvailable ? "Available" : "Unavailable")
                 .font(.system(size: 12, weight: .semibold))
                 .textCase(.uppercase)
-                .foregroundColor(.white)
         }
+        .foregroundColor(.white)
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .background(Color.green)
+        .background(
+            isAvailable
+            ? Color.green
+            : Color.red.opacity(0.9)
+        )
         .clipShape(Capsule())
     }
 }
