@@ -673,24 +673,39 @@ private extension DoctorDetailsView {
             alignment: .leading,
             spacing: 24
         ) {
-
-            slotSection(
-                title: "Morning",
-                icon: "sunrise.fill",
-                slots: morningSlots
-            )
-
-            slotSection(
-                title: "Afternoon",
-                icon: "sun.max.fill",
-                slots: afternoonSlots
-            )
-
-            slotSection(
-                title: "Evening",
-                icon: "moon.stars.fill",
-                slots: eveningSlots
-            )
+            if(morningSlots.isEmpty && eveningSlots.isEmpty && afternoonSlots.isEmpty){
+                Text("No slots available for the selected date")
+            }else {
+                if(morningSlots.isEmpty){
+                    EmptyView()
+                }else{
+                    slotSection(
+                        title: "Morning",
+                        icon: "sunrise.fill",
+                        slots: morningSlots
+                    )
+                }
+                
+                if(afternoonSlots.isEmpty){
+                    EmptyView()
+                }else{
+                    slotSection(
+                        title: "Afternoon",
+                        icon: "sun.max.fill",
+                        slots: afternoonSlots
+                    )
+                }
+                
+                if(eveningSlots.isEmpty){
+                    EmptyView()
+                }else{
+                    slotSection(
+                        title: "Evening",
+                        icon: "moon.stars.fill",
+                        slots: eveningSlots
+                    )
+                }
+            }
         }
         }
     }
