@@ -9,7 +9,8 @@ enum Endpoint {
     case dashboard(latitude: Double, longitude: Double)
     case searchDoctors(query: String)
     case doctorDetails(
-        id: String,
+        doctorId: String,
+        clinicId: String,
         date: String
     )
 
@@ -31,8 +32,8 @@ enum Endpoint {
                 ) ?? ""
 
             return "api/v1/doctors/search?q=\(encoded)"
-        case .doctorDetails(let id, let date):
-            return "api/v1/doctors/\(id)?date=\(date)"
+        case .doctorDetails(let doctorId, let clinicId, let date):
+            return "api/v1/doctors/\(doctorId)?clinicId=\(clinicId)&date=\(date)"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }

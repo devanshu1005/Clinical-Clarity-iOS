@@ -20,8 +20,10 @@ struct Clinic: Decodable {
     let doctorPreviewImages: [String]?
 
     let distanceInKm: Double?
-    
+
     let location: ClinicLocation?
+
+    let availability: DoctorAvailability?
 
     enum CodingKeys: String, CodingKey {
 
@@ -34,6 +36,7 @@ struct Clinic: Decodable {
         case doctorPreviewImages
         case distanceInKm
         case location
+        case availability
     }
 }
 

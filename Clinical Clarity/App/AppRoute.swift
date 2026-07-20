@@ -7,7 +7,7 @@
 
 enum AppRoute: Hashable {
 
-    case doctorDetails(id: String)
+    case doctorDetails(doctorId: String, clinicId: String)
     
     case doctorList(specialization: String)
     

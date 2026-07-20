@@ -16,11 +16,11 @@ struct Doctor: Decodable {
     let qualification: String?
 
     let experienceYears: Int?
-    
+
     let consultationFee: Int?
 
     let profileImage: String?
-    
+
     let bio: String?
 
     let languages: [String]?
@@ -30,8 +30,6 @@ struct Doctor: Decodable {
     let totalReviews: Int?
 
     let clinics: [Clinic]?
-    
-    let availability: DoctorAvailability?
 
     enum CodingKeys: String, CodingKey {
 
@@ -48,7 +46,6 @@ struct Doctor: Decodable {
         case averageRating
         case totalReviews
         case clinics
-        case availability
     }
 }
 

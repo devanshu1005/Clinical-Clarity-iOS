@@ -241,7 +241,8 @@ private extension DoctorSearchView {
 
                         navigationManager.push(
                             .doctorDetails(
-                                id: doctor.id
+                                doctorId: doctor.id,
+                                clinicId: doctor.clinics?.first?.id ?? ""
                             )
                         )
                     }

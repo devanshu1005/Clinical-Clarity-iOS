@@ -335,7 +335,7 @@ private extension DashboardView {
                             PopularDoctorCard(doctor: doctor) {
 
                                 navigationManager.push(
-                                      .doctorDetails(id: doctor.id)
+                                    .doctorDetails(doctorId: doctor.id, clinicId: doctor.clinics?.first?.id ?? "")
                                       )
                             }
                         }

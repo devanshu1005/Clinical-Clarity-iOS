@@ -11,18 +11,21 @@ import MapKit
 struct DoctorDetailsView: View {
 
     let doctorId: String
+    let clinicId: String
     @State private var showMapsOptions = false
 
     @StateObject
     private var viewModel: DoctorDetailsViewModel
     
-    init(doctorId: String) {
+    init(doctorId: String, clinicId: String) {
 
         self.doctorId = doctorId
+        self.clinicId = clinicId
 
         _viewModel = StateObject(
             wrappedValue: DoctorDetailsViewModel(
-                doctorId: doctorId
+                doctorId: doctorId,
+                clinicId: clinicId
             )
         )
     }
@@ -74,7 +77,7 @@ struct DoctorDetailsView: View {
 
                             Text(error)
 
-                        } else if viewModel.doctor?.availability != nil {
+                        } else if viewModel.doctor?.clinics?.first?.availability != nil {
 
                             slotSection
                             
@@ -118,7 +121,8 @@ struct DoctorDetailsView: View {
 #Preview {
     NavigationStack {
         DoctorDetailsView(
-            doctorId: "doctor_123456"
+            doctorId: "doctor_123456",
+            clinicId: "clinic_12345"
         )
     }
 }
@@ -492,7 +496,7 @@ private extension DoctorDetailsView {
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(.textPrimary)
 
-                if let availability = viewModel.doctor?.availability {
+                if let availability = viewModel.doctor?.clinics?.first?.availability {
 
                     Text(formattedWorkingDays(availability.workingDays))
                         .font(.caption)

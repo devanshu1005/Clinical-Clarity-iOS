@@ -27,10 +27,13 @@ final class DoctorDetailsViewModel: ObservableObject {
     @Published var errorMessageSlots: String?
 
     private let doctorId: String
+    
+    private let clinicId: String
 
-    init(doctorId: String) {
+    init(doctorId: String, clinicId: String) {
 
         self.doctorId = doctorId
+        self.clinicId = clinicId
     }
     
     @Published
@@ -66,7 +69,8 @@ final class DoctorDetailsViewModel: ObservableObject {
             let response: DoctorDetailsResponse =
                 try await APIClient.shared.request(
                     endpoint: .doctorDetails(
-                        id: doctorId,
+                        doctorId: doctorId,
+                        clinicId: clinicId,  
                         date: selected
                     )
                 )
@@ -101,7 +105,8 @@ final class DoctorDetailsViewModel: ObservableObject {
             let response: DoctorDetailsResponse =
                 try await APIClient.shared.request(
                     endpoint: .doctorDetails(
-                        id: doctorId,
+                        doctorId: doctorId,
+                        clinicId: doctor?.clinics?.first?.id ?? "",
                         date: selected
                     )
                 )

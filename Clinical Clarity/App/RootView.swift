@@ -37,9 +37,10 @@ struct RootView: View {
                 case .appointmentDetails:
                                         AppointmentView()
                
-                case .doctorDetails(let doctorId):
+                case .doctorDetails(let doctorId, let clinicId):
                     DoctorDetailsView(
-                        doctorId: doctorId
+                        doctorId: doctorId,
+                        clinicId: clinicId
                     )
                     
                 case .doctorList(let specialization):
