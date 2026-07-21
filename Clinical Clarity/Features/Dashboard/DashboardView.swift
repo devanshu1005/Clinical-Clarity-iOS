@@ -239,7 +239,6 @@ private extension DashboardView {
         let appointments = section.items.compactMap {
 
             if case let .appointment(value) = $0 {
-
                 return value
             }
 
@@ -249,9 +248,9 @@ private extension DashboardView {
         return AnyView(
 
             VStack(alignment: .leading, spacing: 20) {
-                if(appointments.isEmpty ){
-                    EmptyView()
-                }else{
+
+                if !appointments.isEmpty {
+
                     HStack {
 
                         Text(section.title)
@@ -265,22 +264,24 @@ private extension DashboardView {
                         .font(.appLabelBold)
                         .foregroundColor(.brandPrimary)
                     }
-                }
-                
 
-               
+                    ScrollView(.horizontal, showsIndicators: false) {
 
-                LazyVStack(spacing: 16) {
+                        LazyHStack(spacing: 16) {
 
-                    ForEach(appointments, id: \.id) { appointment in
+                            ForEach(appointments, id: \.id) { appointment in
 
-                        AppointmentCard(
-                            appointment: appointment,
-                            buttonTitle: "View Appointment"
-                        ) {
+                                AppointmentCard(
+                                    appointment: appointment,
+                                    buttonTitle: "View Appointment"
+                                ) {
 
-                            print("Open Appointment Details")
+                                    print("Open Appointment Details")
+                                }
+                                .frame(width: 320)
+                            }
                         }
+                        .padding(.horizontal, 2)
                     }
                 }
             }
@@ -386,7 +387,9 @@ private extension DashboardView {
 
                         NearbyDoctorCard(item: doctor) {
 
-                            print("Book Appointment")
+                            navigationManager.push(
+                                .doctorDetails(doctorId: doctor.doctor.id, clinicId: doctor.nearestClinic.id)
+                                  )
                         }
                     }
                 }
