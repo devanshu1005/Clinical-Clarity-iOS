@@ -9,7 +9,7 @@ import Foundation
 
 enum DashboardTab: CaseIterable {
     case home
+    case search
     case appointments
-    case health
     case profile
 }

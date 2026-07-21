@@ -23,11 +23,10 @@ struct MainContainerView: View {
                 case .home:
                     DashboardView(viewModel: dashboardViewModel)
 
+                case .search:
+                    DoctorSearchView()
+                    
                 case .appointments:
-                    AppointmentView()
-
-                case .health:
-//                    HealthRecordView()
                     AppointmentView()
 
                 case .profile:

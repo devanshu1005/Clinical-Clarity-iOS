@@ -24,17 +24,17 @@ struct BottomNavigationView: View {
             Spacer()
 
             navItem(
-                tab: .appointments,
-                icon: "calendar",
-                title: "Appointments"
+                tab: .search,
+                icon: "magnifyingglass",
+                title: "Search"
             )
 
             Spacer()
 
             navItem(
-                tab: .health,
-                icon: "heart.text.square.fill",
-                title: "Health"
+                tab: .appointments,
+                icon: "calendar",
+                title: "Bookings"
             )
 
             Spacer()
