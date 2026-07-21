@@ -2,15 +2,15 @@
 //  Appointment.swift
 //  Clinical Clarity
 //
-//  Created by Rakesh Gupta on 15/07/26.
+//  Created by Rakesh Gupta on 21/07/26.
 //
 
-struct Appointment: Decodable {
+struct Appointment: Decodable, Hashable {
 
     let id: String
-    let doctorId: Doctor
-    let clinicId: Clinic
-
+    let doctorId: String
+    let clinicId: String
+    let patientId: String
     let appointmentDate: String
     let startTime: String
     let endTime: String
@@ -22,7 +22,7 @@ struct Appointment: Decodable {
 
         case doctorId
         case clinicId
-
+        case patientId
         case appointmentDate
         case startTime
         case endTime

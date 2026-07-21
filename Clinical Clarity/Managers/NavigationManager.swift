@@ -5,6 +5,10 @@ import Combine
 final class NavigationManager: ObservableObject {
 
     @Published var path = NavigationPath()
+    
+    func reset() {
+           path = NavigationPath()
+       }
 
     func push(_ route: AppRoute) {
         path.append(route)

@@ -9,7 +9,7 @@ enum DashboardItem {
 
     case specialization(String)
 
-    case appointment(Appointment)
+    case appointment(UpcomingAppointments)
 
     case doctor(Doctor)
 

@@ -13,6 +13,7 @@ enum Endpoint {
         clinicId: String,
         date: String
     )
+    case bookAppointment
 
     var path: String {
         switch self {
@@ -34,6 +35,8 @@ enum Endpoint {
             return "api/v1/doctors/search?q=\(encoded)"
         case .doctorDetails(let doctorId, let clinicId, let date):
             return "api/v1/doctors/\(doctorId)?clinicId=\(clinicId)&date=\(date)"
+        case .bookAppointment:
+            return "api/v1/appointments"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }
@@ -43,7 +46,7 @@ enum Endpoint {
         switch self {
 //        case .register, .bookSlot, .verifyOTP, .updateProfile, .raiseQuery:
 //            return .POST
-        case .requestOTP, .verifyOTP:
+        case .requestOTP, .verifyOTP, .bookAppointment:
                    return .POST
         case .onboarding, .dashboard, .searchDoctors, .doctorDetails:
             return .GET

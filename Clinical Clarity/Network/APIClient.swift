@@ -6,6 +6,19 @@ final class APIClient {
     static let shared = APIClient()
     private init() {}
     
+    private func handleUnauthorized() {
+
+        UserDefaults.standard.removeObject(forKey: "authToken")
+
+        DispatchQueue.main.async {
+
+            NotificationCenter.default.post(
+                name: .didLogout,
+                object: nil
+            )
+        }
+    }
+    
     func request<T: Decodable>(
         endpoint: Endpoint,
         body: Encodable? = nil,
@@ -70,6 +83,13 @@ final class APIClient {
         print(String(data: data, encoding: .utf8) ?? "No Response")
 
         print("========================================")
+        
+        if httpResponse.statusCode == 401 {
+
+            handleUnauthorized()
+
+            throw APIError.unauthorized
+        }
 
         guard (200...299).contains(httpResponse.statusCode) else {
             throw APIError.serverError(httpResponse.statusCode)
@@ -148,6 +168,13 @@ final class APIClient {
         print("👉 Status Code:", httpResponse.statusCode)
         print("👉 Response:", String(data: data, encoding: .utf8) ?? "")
         
+        if httpResponse.statusCode == 401 {
+
+            handleUnauthorized()
+
+            throw APIError.unauthorized
+        }
+        
         guard (200...299).contains(httpResponse.statusCode) else {
             throw APIError.serverError(httpResponse.statusCode)
         }
@@ -220,6 +247,13 @@ final class APIClient {
         
         print("👉 Status Code:", httpResponse.statusCode)
         
+        if httpResponse.statusCode == 401 {
+
+            handleUnauthorized()
+
+            throw APIError.unauthorized
+        }
+        
         guard (200...299).contains(httpResponse.statusCode) else {
             throw APIError.serverError(httpResponse.statusCode)
         }
@@ -256,4 +290,11 @@ enum APIError: Error {
     case invalidResponse
     case serverError(Int)
     case decodingError
+    case unauthorized
+}
+
+extension Notification.Name {
+
+    static let didLogout =
+        Notification.Name("didLogout")
 }

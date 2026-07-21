@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppointmentCard: View {
 
-    let appointment: Appointment
+    let appointment: UpcomingAppointments
 
         var buttonTitle: String = "View Appointment"
 

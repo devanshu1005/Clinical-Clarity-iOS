@@ -13,6 +13,9 @@ struct DoctorDetailsView: View {
     let doctorId: String
     let clinicId: String
     @State private var showMapsOptions = false
+    
+    @EnvironmentObject
+    private var navigationManager: NavigationManager
 
     @StateObject
     private var viewModel: DoctorDetailsViewModel
@@ -980,8 +983,7 @@ private extension DoctorDetailsView {
                 .clipShape(
                     RoundedRectangle(cornerRadius: 12)
                 )
-            }
-            .disabled(viewModel.selectedSlot == nil)
+            }            .disabled(viewModel.isBooking || viewModel.selectedSlot == nil)
 
         }
         .padding(24)
@@ -998,26 +1000,22 @@ private extension DoctorDetailsView {
 
     func bookAppointment() {
 
-        guard
-            let doctor = viewModel.doctor,
-            let slot = viewModel.selectedSlot
-        else {
+        Task {
 
-            return
+            do {
+
+                let appointment = try await viewModel.bookAppointment()
+
+                navigationManager.push(
+                    .appointmentConfirmation(
+                        appointment: appointment
+                    )
+                )
+
+            } catch {
+
+                print(error)
+            }
         }
-
-        print("========== Appointment ==========")
-        print("Doctor :", doctor.name)
-        print("Doctor Id :", doctor.id)
-        print("clinic Id :", viewModel.selectedClinicId)
-        print("clinic name :", viewModel.selectedClinic?.name ?? "")
-        print("Date :", viewModel.selectedDate)
-        print("Slot :", slot.start)
-        print("===============================")
-
-        // TODO:
-        // navigationManager.push(
-        //     .bookAppointment(...)
-        // )
     }
 }

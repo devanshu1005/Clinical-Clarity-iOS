@@ -10,22 +10,9 @@
 		589940C72FFF79D600E95282 /* Clinical Clarity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clinical Clarity.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		58CBEE3C300DF94A003C1771 /* Exceptions for "Clinical Clarity" folder in "Clinical Clarity" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Clinical-Clarity-Info.plist",
-			);
-			target = 589940C62FFF79D600E95282 /* Clinical Clarity */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		589940C92FFF79D600E95282 /* Clinical Clarity */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				58CBEE3C300DF94A003C1771 /* Exceptions for "Clinical Clarity" folder in "Clinical Clarity" target */,
-			);
 			path = "Clinical Clarity";
 			sourceTree = "<group>";
 		};

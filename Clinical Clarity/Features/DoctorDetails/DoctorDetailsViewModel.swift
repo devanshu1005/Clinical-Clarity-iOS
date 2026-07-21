@@ -35,6 +35,9 @@ final class DoctorDetailsViewModel: ObservableObject {
                $0.id == selectedClinicId
            })
        }
+    
+    @Published var isBooking = false
+    @Published var bookingError: String?
 
     init(doctorId: String, clinicId: String) {
 
@@ -160,6 +163,43 @@ final class DoctorDetailsViewModel: ObservableObject {
 
             errorMessageSlots = error.localizedDescription
         }
+    }
+    
+    func bookAppointment() async throws -> Appointment {
+
+        guard
+            let doctor = doctor,
+            let slot = selectedSlot
+        else {
+            throw APIError.invalidResponse
+        }
+
+        isBooking = true
+        bookingError = nil
+
+        defer {
+            isBooking = false
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+
+        let body = BookAppointmentRequest(
+            doctorId: doctor.id,
+            clinicId: selectedClinicId,
+            appointmentDate: formatter.string(from: selectedDate),
+            startTime: slot.start,
+            endTime: slot.end
+        )
+
+        let response: BookAppointmentResponse =
+            try await APIClient.shared.request(
+                endpoint: .bookAppointment,
+                body: body,
+                requiresAuth: true
+            )
+
+        return response.data
     }
 
     private static func currentDate(

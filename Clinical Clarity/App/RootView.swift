@@ -4,6 +4,7 @@ struct RootView: View {
 
     @EnvironmentObject private var appFlow: AppFlowManager
     @EnvironmentObject private var navigationManager: NavigationManager
+    @EnvironmentObject private var authManager: AuthManager
 
     var body: some View {
 
@@ -50,8 +51,24 @@ struct RootView: View {
                     
                 case .doctorSearch:
                     DoctorSearchView()
+                    
+                case .appointmentConfirmation(let appointment):
+                    AppointmentConfirmationView(
+                        appointment: appointment
+                    )
                 }
             }
+        }.onReceive(
+            NotificationCenter.default.publisher(
+                for: .didLogout
+            )
+        ) { _ in
+
+            authManager.logout()
+
+            navigationManager.reset()
+
+            appFlow.moveToLogin()
         }
     }
 }

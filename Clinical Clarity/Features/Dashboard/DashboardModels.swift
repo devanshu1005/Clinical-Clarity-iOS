@@ -44,7 +44,7 @@ struct DashboardSection: Decodable {
             }
 
         case "UPCOMING_APPOINTMENTS":
-            let value = try container.decode([Appointment].self, forKey: .items)
+            let value = try container.decode([UpcomingAppointments].self, forKey: .items)
             items = value.map {
                 .appointment($0)
             }
