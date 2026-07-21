@@ -54,6 +54,7 @@ struct DoctorDetailsView: View {
                         heroCard
                         statsSection
                         aboutSection
+                        clinicSelector
                         clinicSection
                         bookingSection
                         
@@ -77,7 +78,7 @@ struct DoctorDetailsView: View {
 
                             Text(error)
 
-                        } else if viewModel.doctor?.clinics?.first?.availability != nil {
+                        } else if viewModel.selectedClinic?.availability != nil {
 
                             slotSection
                             
@@ -108,6 +109,15 @@ struct DoctorDetailsView: View {
 
             Button("Cancel", role: .cancel) {}
         }
+//        .onChange(of: viewModel.selectedClinicId) { _ in
+//
+//            Task {
+//
+//                await viewModel.changeClinic(
+//                    for: viewModel.selectedDate
+//                )
+//            }
+//        }
         .navigationBarTitleDisplayMode(.inline)
         .task {
 
@@ -359,6 +369,93 @@ private extension DoctorDetailsView {
 
 private extension DoctorDetailsView {
 
+    var clinicSelector: some View {
+
+        VStack(alignment: .leading, spacing: 16) {
+
+            sectionTitle(
+                "Select Clinic",
+//                systemImage: "cross.case.fill"
+            )
+
+            ScrollView(.horizontal, showsIndicators: false) {
+
+                HStack(spacing: 12) {
+
+                    ForEach(viewModel.doctor?.clinics ?? [], id: \.id) { clinic in
+
+                        Button {
+
+                            guard viewModel.selectedClinicId != clinic.id else {
+                                return
+                            }
+
+                            viewModel.selectedClinicId = clinic.id
+
+                            Task {
+                                await viewModel.changeClinic(
+                                    for: viewModel.selectedDate
+                                )
+                            }
+
+                        } label: {
+
+                            HStack(alignment: .top) {
+
+                                VStack(alignment: .leading, spacing: 6) {
+
+                                    Text(clinic.name)
+                                        .font(.subheadline.weight(.semibold))
+
+                                    if let address = clinic.shortAddress {
+                                        Text(address)
+                                            .font(.caption)
+                                    }
+                                }
+
+                                Spacer()
+
+                                if viewModel.selectedClinicId == clinic.id {
+
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .foregroundColor(
+                                viewModel.selectedClinicId == clinic.id
+                                ? .white
+                                : .textPrimary
+                            )
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 14)
+                            .frame(minWidth: 220, alignment: .leading)
+                            .background(
+                                viewModel.selectedClinicId == clinic.id
+                                ? Color.brandPrimary
+                                : Color.cardBackground
+                            )
+                            .overlay {
+
+                                RoundedRectangle(cornerRadius: 18)
+                                    .stroke(
+                                        viewModel.selectedClinicId == clinic.id
+                                        ? Color.clear
+                                        : Color.borderDefault
+                                    )
+                            }
+                            .clipShape(
+                                RoundedRectangle(cornerRadius: 18)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private extension DoctorDetailsView {
+
     func sectionTitle(
         _ title: String
     ) -> some View {
@@ -442,11 +539,11 @@ private extension DoctorDetailsView {
             spacing: 4
         ) {
 
-            Text(viewModel.doctor?.clinics?.first?.name ?? "Clinic not available")
+            Text(viewModel.selectedClinic?.name ?? "Clinic not available")
                 .font(.headline)
                 .foregroundColor(.textPrimary)
 
-            Text(viewModel.doctor?.clinics?.first?.shortAddress ?? "")
+            Text(viewModel.selectedClinic?.shortAddress ?? "")
                 .font(.appBody)
                 .foregroundColor(.textSecondary)
         }
@@ -496,7 +593,7 @@ private extension DoctorDetailsView {
                     .font(.subheadline.weight(.semibold))
                     .foregroundColor(.textPrimary)
 
-                if let availability = viewModel.doctor?.clinics?.first?.availability {
+                if let availability = viewModel.selectedClinic?.availability {
 
                     Text(formattedWorkingDays(availability.workingDays))
                         .font(.caption)
@@ -912,6 +1009,8 @@ private extension DoctorDetailsView {
         print("========== Appointment ==========")
         print("Doctor :", doctor.name)
         print("Doctor Id :", doctor.id)
+        print("clinic Id :", viewModel.selectedClinicId)
+        print("clinic name :", viewModel.selectedClinic?.name ?? "")
         print("Date :", viewModel.selectedDate)
         print("Slot :", slot.start)
         print("===============================")

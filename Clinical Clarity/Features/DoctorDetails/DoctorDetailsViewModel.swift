@@ -28,12 +28,18 @@ final class DoctorDetailsViewModel: ObservableObject {
 
     private let doctorId: String
     
-    private let clinicId: String
+    @Published var selectedClinicId: String
+    
+    var selectedClinic: Clinic? {
+           doctor?.clinics?.first(where: {
+               $0.id == selectedClinicId
+           })
+       }
 
     init(doctorId: String, clinicId: String) {
 
         self.doctorId = doctorId
-        self.clinicId = clinicId
+        self.selectedClinicId = clinicId
     }
     
     @Published
@@ -70,7 +76,7 @@ final class DoctorDetailsViewModel: ObservableObject {
                 try await APIClient.shared.request(
                     endpoint: .doctorDetails(
                         doctorId: doctorId,
-                        clinicId: clinicId,  
+                        clinicId: selectedClinicId,
                         date: selected
                     )
                 )
@@ -106,12 +112,48 @@ final class DoctorDetailsViewModel: ObservableObject {
                 try await APIClient.shared.request(
                     endpoint: .doctorDetails(
                         doctorId: doctorId,
-                        clinicId: doctor?.clinics?.first?.id ?? "",
+                        clinicId: selectedClinicId,
                         date: selected
                     )
                 )
 
 //            doctor = response.data.doctor
+            slots = response.data.availableSlots
+
+        } catch {
+
+            errorMessageSlots = error.localizedDescription
+        }
+    }
+    
+    func changeClinic(
+        for date: Date? = nil
+    ) async {
+
+        isLoadingSlots = true
+        errorMessageSlots = nil
+
+        defer {
+
+            isLoadingSlots = false
+        }
+
+        do {
+
+            let selected = Self.currentDate(
+                from: date ?? selectedDate
+            )
+
+            let response: DoctorDetailsResponse =
+                try await APIClient.shared.request(
+                    endpoint: .doctorDetails(
+                        doctorId: doctorId,
+                        clinicId: selectedClinicId,
+                        date: selected
+                    )
+                )
+
+            doctor = response.data.doctor
             slots = response.data.availableSlots
 
         } catch {
