@@ -16,12 +16,42 @@ final class DashboardViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     @Published var sections: [DashboardSection] = []
+    
+    @Published var upcomingAppointments: [UpcomingAppointments] = []
+    
+    @Published var selectedAppointmentFilter: AppointmentFilter = .upcoming
+    
+    enum AppointmentFilter: String, CaseIterable, Identifiable {
 
+        case upcoming = "Upcoming Appointments"
+        case completed = "Completed Appointments"
+
+        var id: String { rawValue }
+
+        var status: String {
+            switch self {
+            case .upcoming:
+                return "BOOKED"
+            case .completed:
+                return "COMPLETED"
+            }
+        }
+    }
+    
     func loadDashboard() async {
 
         isLoading = true
-
         errorMessage = nil
+
+        async let dashboardTask: Void = fetchDashboard()
+        async let appointmentsTask: Void = loadAppointments()
+
+        _ = await (dashboardTask, appointmentsTask)
+
+        isLoading = false
+    }
+
+    private func fetchDashboard() async {
 
         do {
 
@@ -36,15 +66,33 @@ final class DashboardViewModel: ObservableObject {
 
             sections = response.data.sections
 
-            isLoading = false
-
         } catch {
-
-            isLoading = false
 
             errorMessage = error.localizedDescription
 
             print(error)
+        }
+    }
+    
+    func loadAppointments() async {
+
+        do {
+
+            let response: AppointmentsResponse =
+                try await APIClient.shared.request(
+                    endpoint: .appointments(
+                        status: selectedAppointmentFilter.status
+                    ),
+                    requiresAuth: true
+                )
+
+            upcomingAppointments = response.data
+
+        } catch {
+
+            print(error)
+
+            errorMessage = error.localizedDescription
         }
     }
 }

@@ -36,7 +36,8 @@ struct RootView: View {
                 switch route {
                     
                 case .appointmentDetails:
-                                        AppointmentView()
+//                    TODO change
+                    DoctorSearchView()
                
                 case .doctorDetails(let doctorId, let clinicId):
                     DoctorDetailsView(
