@@ -276,7 +276,11 @@ private extension DashboardView {
                                     buttonTitle: "View Appointment"
                                 ) {
 
-                                    print("Open Appointment Details")
+                                    navigationManager.push(
+                                        .appointmentDetails(
+                                            id: appointment.id
+                                        )
+                                    )
                                 }
                                 .frame(width: 320)
                             }

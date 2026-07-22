@@ -13,7 +13,7 @@ enum AppRoute: Hashable {
     
     case doctorSearch
     
-    case appointmentDetails
-    
     case appointmentConfirmation(appointment: Appointment)
+    
+    case appointmentDetails(id: String)
 }

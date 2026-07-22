@@ -8,6 +8,7 @@ import SwiftUI
 struct AppointmentView: View {
     
     @ObservedObject var viewModel: DashboardViewModel
+    @EnvironmentObject private var navigationManager: NavigationManager
     
     var body: some View {
         
@@ -107,7 +108,11 @@ struct AppointmentView: View {
                                 appointment: appointment
                             ) {
                                 
-                                print("View Appointment")
+                                navigationManager.push(
+                                    .appointmentDetails(
+                                        id: appointment.id
+                                    )
+                                )
                             }
                         }
                     }

@@ -15,6 +15,7 @@ enum Endpoint {
     )
     case bookAppointment
     case appointments(status: String)
+    case appointmentDetails(id: String)
 
     var path: String {
         switch self {
@@ -40,6 +41,8 @@ enum Endpoint {
             return "api/v1/appointments"
         case .appointments(let status):
             return "api/v1/appointments?status=\(status)"
+        case .appointmentDetails(let id):
+            return "api/v1/appointments/\(id)"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }
@@ -51,7 +54,7 @@ enum Endpoint {
 //            return .POST
         case .requestOTP, .verifyOTP, .bookAppointment:
                    return .POST
-        case .onboarding, .dashboard, .searchDoctors, .doctorDetails, .appointments:
+        case .onboarding, .dashboard, .searchDoctors, .doctorDetails, .appointments, .appointmentDetails:
             return .GET
         }
     }
