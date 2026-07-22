@@ -11,115 +11,112 @@ struct AppointmentView: View {
     
     var body: some View {
         
-        NavigationStack {
+        Group {
             
-            Group {
-                
-                VStack(spacing: 20) {
-                    Picker(
-                        "Appointments",
-                        selection: $viewModel.selectedAppointmentFilter
-                    ) {
+            VStack(spacing: 20) {
+                Picker(
+                    "Appointments",
+                    selection: $viewModel.selectedAppointmentFilter
+                ) {
+                    
+                    ForEach(DashboardViewModel.AppointmentFilter.allCases) { filter in
                         
-                        ForEach(DashboardViewModel.AppointmentFilter.allCases) { filter in
-                            
-                            Text(filter.rawValue)
-                                .tag(filter)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
-                    .onChange(of: viewModel.selectedAppointmentFilter) { _ in
-                        
-                        Task {
-                            
-                            await viewModel.loadAppointments()
-                        }
+                        Text(filter.rawValue)
+                            .tag(filter)
                     }
                 }
-                
-                if viewModel.isLoading {
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .onChange(of: viewModel.selectedAppointmentFilter) { _ in
                     
-                    ProgressView()
-                    
-                } else if let error = viewModel.errorMessage {
-                    
-                    if #available(iOS 17.0, *) {
-                        ContentUnavailableView(
-                            "Something went wrong",
-                            systemImage: "exclamationmark.triangle",
-                            description: Text(error)
-                        )
-                    } else {
-                        // Fallback on earlier versions
-                        VStack(spacing: 16) {
-                            
-                            Image(systemName: "exclamationmark.triangle")
-                                .font(.system(size: 48))
-                                .foregroundColor(.orange)
-                            
-                            Text("Something went wrong")
-                                .font(.appBodySemibold)
-                            
-                            Text(error)
-                                .font(.appBody)
-                                .foregroundColor(.textSecondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 32)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    
-                } else if viewModel.upcomingAppointments.isEmpty {
-                    
-                    if #available(iOS 17.0, *) {
-                        ContentUnavailableView(
-                            "No Appointments",
-                            systemImage: "calendar",
-                            description: Text("You don't have any appointments yet.")
-                        )
-                    } else {
-                        // Fallback on earlier versions
-                        VStack(spacing: 16) {
-                            
-                            Image(systemName: "calendar")
-                                .font(.system(size: 48))
-                                .foregroundColor(.brandPrimary)
-                            
-                            Text("No Appointments")
-                                .font(.appBodySemibold)
-                            
-                            Text("You don't have any appointments yet.")
-                                .font(.appBody)
-                                .foregroundColor(.textSecondary)
-                                .multilineTextAlignment(.center)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    
-                } else {
-                    
-                    ScrollView {
+                    Task {
                         
-                        LazyVStack(spacing: 16) {
-                            
-                            ForEach(viewModel.upcomingAppointments, id: \.id) { appointment in
-                                
-                                AppointmentCard(
-                                    appointment: appointment
-                                ) {
-                                    
-                                    print("View Appointment")
-                                }
-                            }
-                        }
-                        .padding()
+                        await viewModel.loadAppointments()
                     }
-                    
                 }
             }
-            .navigationTitle("Appointments")
+            
+            if viewModel.isLoading {
+                
+                ProgressView()
+                
+            } else if let error = viewModel.errorMessage {
+                
+                if #available(iOS 17.0, *) {
+                    ContentUnavailableView(
+                        "Something went wrong",
+                        systemImage: "exclamationmark.triangle",
+                        description: Text(error)
+                    )
+                } else {
+                    // Fallback on earlier versions
+                    VStack(spacing: 16) {
+                        
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.system(size: 48))
+                            .foregroundColor(.orange)
+                        
+                        Text("Something went wrong")
+                            .font(.appBodySemibold)
+                        
+                        Text(error)
+                            .font(.appBody)
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 32)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                
+            } else if viewModel.upcomingAppointments.isEmpty {
+                
+                if #available(iOS 17.0, *) {
+                    ContentUnavailableView(
+                        "No Appointments",
+                        systemImage: "calendar",
+                        description: Text("You don't have any appointments yet.")
+                    )
+                } else {
+                    // Fallback on earlier versions
+                    VStack(spacing: 16) {
+                        
+                        Image(systemName: "calendar")
+                            .font(.system(size: 48))
+                            .foregroundColor(.brandPrimary)
+                        
+                        Text("No Appointments")
+                            .font(.appBodySemibold)
+                        
+                        Text("You don't have any appointments yet.")
+                            .font(.appBody)
+                            .foregroundColor(.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                
+            } else {
+                
+                ScrollView {
+                    
+                    LazyVStack(spacing: 16) {
+                        
+                        ForEach(viewModel.upcomingAppointments, id: \.id) { appointment in
+                            
+                            AppointmentCard(
+                                appointment: appointment
+                            ) {
+                                
+                                print("View Appointment")
+                            }
+                        }
+                    }
+                    .padding()
+                }
+                
+            }
         }
+        .navigationTitle("Appointments")
         .task {
             
             await viewModel.loadAppointments()
