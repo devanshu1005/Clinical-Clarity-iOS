@@ -17,6 +17,7 @@ enum Endpoint {
     case appointments(status: String)
     case appointmentDetails(id: String)
     case profile
+    case updateProfile
 
     var path: String {
         switch self {
@@ -46,6 +47,8 @@ enum Endpoint {
             return "api/v1/appointments/\(id)"
         case .profile:
             return "api/v1/users/profile"
+        case .updateProfile:
+            return "api/v1/users/profile"
 //        case .login(let mobile):
 //               return "api/v4/user/login?mobile_no=\(mobile)"
         }
@@ -59,6 +62,8 @@ enum Endpoint {
                    return .POST
         case .onboarding, .dashboard, .searchDoctors, .doctorDetails, .appointments, .appointmentDetails, .profile:
             return .GET
+        case .updateProfile:
+            return .PUT
         }
     }
 }

@@ -35,8 +35,6 @@ struct RootView: View {
 
                 switch route {
                     
- 
-               
                 case .doctorDetails(let doctorId, let clinicId):
                     DoctorDetailsView(
                         doctorId: doctorId,
@@ -58,6 +56,10 @@ struct RootView: View {
                     
                 case .appointmentDetails(let id):
                     AppointmentDetailView(appointmentId: id)
+                    
+                case .editProfile:
+                    EditProfileView()
+                    
                 }
             }
         }.onReceive(

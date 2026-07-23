@@ -188,77 +188,126 @@ final class APIClient {
         images: [String: UIImage?],
         requiresAuth: Bool = false
     ) async throws -> T {
-        
+
         guard let url = URL(string: APIConfig.baseURL + endpoint.path) else {
             throw APIError.invalidURL
         }
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
-        
+
         let boundary = UUID().uuidString
-        
-        // Headers
+
+        // MARK: - Headers
+
         var headers = APIConfig.defaultHeaders
-        
+
         if requiresAuth,
            let token = UserDefaults.standard.string(forKey: "authToken") {
             headers["Authorization"] = "Bearer \(token)"
         }
-        
+
         headers["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
         request.allHTTPHeaderFields = headers
-        
+
         var body = Data()
-        
+
         // MARK: - Add Text Fields
+
         for (key, value) in parameters {
+
             body.append("--\(boundary)\r\n")
             body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
             body.append("\(value)\r\n")
         }
-        
+
         // MARK: - Add Images
+
         for (key, image) in images {
-            if let image,
-               let data = image.jpegData(compressionQuality: 0.7) {
-                
-                let fileName = "\(key)_\(UUID().uuidString).jpg" // ✅ UNIQUE
-                
-                print("⬆️ Uploading:", key, "as", fileName) // ✅ debug
-                
-                body.append("--\(boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(fileName)\"\r\n")
-                body.append("Content-Type: image/jpeg\r\n\r\n")
-                body.append(data)
-                body.append("\r\n")
+
+            guard let image,
+                  let data = image.jpegData(compressionQuality: 0.7) else {
+                continue
             }
+
+            let fileName = "\(key)_\(UUID().uuidString).jpg"
+
+            body.append("--\(boundary)\r\n")
+            body.append("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(fileName)\"\r\n")
+            body.append("Content-Type: image/jpeg\r\n\r\n")
+            body.append(data)
+            body.append("\r\n")
         }
-        
+
         body.append("--\(boundary)--\r\n")
+
         request.httpBody = body
-        
+
+        // MARK: - Debug Request
+
+        print("\n================ REQUEST ================")
+        print("URL:", url.absoluteString)
+        print("Method:", request.httpMethod ?? "")
+        print("Headers:", request.allHTTPHeaderFields ?? [:])
+
+        print("\nParameters:")
+
+        parameters.forEach {
+            print("• \($0.key): \($0.value)")
+        }
+
+        print("\nImages:")
+
+        images.forEach {
+            print("• \($0.key):", $0.value == nil ? "nil" : "present")
+        }
+
+        print("\nMultipart Body Size:", body.count, "bytes")
+        print("=========================================\n")
+
         // MARK: - API Call
+
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
-        
-        print("👉 Status Code:", httpResponse.statusCode)
-        
+
+        // MARK: - Debug Response
+
+        print("\n================ RESPONSE ===============")
+        print("Status Code:", httpResponse.statusCode)
+
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Body:")
+            print(responseString)
+        } else {
+            print("Body: <Unable to decode response>")
+        }
+
+        print("=========================================\n")
+
+        // MARK: - Handle Errors
+
         if httpResponse.statusCode == 401 {
 
             handleUnauthorized()
-
             throw APIError.unauthorized
         }
-        
+
         guard (200...299).contains(httpResponse.statusCode) else {
             throw APIError.serverError(httpResponse.statusCode)
         }
-        
-        return try JSONDecoder().decode(T.self, from: data)
+
+        do {
+
+            return try JSONDecoder().decode(T.self, from: data)
+
+        } catch {
+
+            print("❌ JSON Decoding Error:", error)
+            throw error
+        }
     }
 }
 

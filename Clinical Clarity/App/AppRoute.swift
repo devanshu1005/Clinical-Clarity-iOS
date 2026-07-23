@@ -16,4 +16,6 @@ enum AppRoute: Hashable {
     case appointmentConfirmation(appointment: Appointment)
     
     case appointmentDetails(id: String)
+    
+    case editProfile
 }

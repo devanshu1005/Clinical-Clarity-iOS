@@ -64,10 +64,6 @@ struct ProfileView: View {
             }
         }
         .navigationTitle("Profile")
-        .task {
-
-            await viewModel.loadProfile()
-        }
     }
 }
 
@@ -75,46 +71,48 @@ private extension ProfileView {
 
     var profileCard: some View {
 
-        VStack(spacing:24) {
+        VStack(spacing: 24) {
 
             profileImage
 
-            VStack(spacing:8) {
+            VStack(spacing: 8) {
 
                 Text(viewModel.displayName)
                     .font(.appTitle)
                     .foregroundColor(.brandPrimary)
 
                 chips
+                    .frame(maxWidth: .infinity, alignment: .center)
 
-                VStack(spacing:12) {
+                VStack(spacing: 12) {
 
                     profileRow(
-                        icon:"phone.fill",
-                        text:viewModel.displayPhone
+                        icon: "phone.fill",
+                        text: viewModel.displayPhone
                     )
 
                     profileRow(
-                        icon:"envelope.fill",
-                        text:viewModel.displayEmail
+                        icon: "envelope.fill",
+                        text: viewModel.displayEmail
                     )
 
                     profileRow(
-                        icon:"location.fill",
-                        text:viewModel.formattedAddress
+                        icon: "location.fill",
+                        text: viewModel.formattedAddress
                     )
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
             }
+            .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding(24)
         .background(Color.cardBackground)
         .overlay {
-
-            RoundedRectangle(cornerRadius:24)
+            RoundedRectangle(cornerRadius: 24)
                 .stroke(Color.borderDefault)
         }
         .clipShape(
-            RoundedRectangle(cornerRadius:24)
+            RoundedRectangle(cornerRadius: 24)
         )
     }
 }
@@ -165,42 +163,30 @@ private extension ProfileView {
 
     var chips: some View {
 
-        FlowLayout(spacing: 8) {
+            HStack(spacing: 8) {
 
-            if let gender = viewModel.profile?.gender {
+                if let gender = viewModel.profile?.gender {
+                    chip(title: gender, color: .brandAccentBlue)
+                }
 
-                chip(
-                    title: gender,
-                    color: .brandAccentBlue
-                )
+                if let age = viewModel.profile?.age {
+                    chip(title: "\(age) Years", color: .brandAccentBlue)
+                }
+
+                if let blood = viewModel.profile?.bloodGroup {
+                    chip(title: blood, color: .brandAccentBlue)
+                }
+
+                if !viewModel.isProfileComplete {
+                    chip(
+                        title: "Complete Profile",
+                        color: Color.red.opacity(0.15),
+                        foreground: .red
+                    )
+                }
             }
-
-            if let age = viewModel.profile?.age {
-
-                chip(
-                    title: "\(age) Years",
-                    color: .brandAccentBlue
-                )
-            }
-
-            if let blood = viewModel.profile?.bloodGroup {
-
-                chip(
-                    title: blood,
-                    color: .brandAccentBlue
-                )
-            }
-
-            if !viewModel.isProfileComplete {
-
-                chip(
-                    title: "Complete Profile",
-                    color: Color.red.opacity(0.15),
-                    foreground: .red
-                )
-            }
+            .frame(maxWidth: .infinity, alignment: .center)
         }
-    }
 
     func chip(
         title: String,
@@ -221,22 +207,21 @@ private extension ProfileView {
 private extension ProfileView {
 
     func profileRow(
-        icon:String,
-        text:String
+        icon: String,
+        text: String
     ) -> some View {
 
-        HStack(alignment:.top,spacing:12){
+        HStack(spacing: 12) {
 
-            Image(systemName:icon)
+            Image(systemName: icon)
                 .foregroundColor(.brandPrimary)
-                .frame(width:20)
 
             Text(text)
                 .font(.appBody)
                 .foregroundColor(.textSecondary)
-
-            Spacer()
+                .multilineTextAlignment(.center)
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 }
 
@@ -253,9 +238,9 @@ private extension ProfileView {
 
                 menuRow(
                     icon: "person.crop.circle",
-                    title: "Edit Proffffile"
+                    title: "Edit Profile"
                 ) {
-                    print("Edit Profile pressed")
+                    navigationManager.push(.editProfile)
                 }
 
                 Divider()
