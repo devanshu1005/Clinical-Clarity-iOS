@@ -12,38 +12,39 @@ struct AppointmentView: View {
     
     var body: some View {
         
-        Group {
-            
-            VStack(spacing: 20) {
-                Picker(
-                    "Appointments",
-                    selection: $viewModel.selectedAppointmentFilter
-                ) {
-                    
-                    ForEach(DashboardViewModel.AppointmentFilter.allCases) { filter in
-                        
-                        Text(filter.rawValue)
-                            .tag(filter)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .onChange(of: viewModel.selectedAppointmentFilter) { _ in
-                    
-                    Task {
-                        
-                        await viewModel.loadAppointments()
-                    }
+        VStack(spacing: 20) {
+
+            Picker(
+                "Appointments",
+                selection: $viewModel.selectedAppointmentFilter
+            ) {
+
+                ForEach(DashboardViewModel.AppointmentFilter.allCases) { filter in
+
+                    Text(filter.rawValue)
+                        .tag(filter)
                 }
             }
-            
-            if viewModel.isLoading {
-                
-                ProgressView()
-                
-            } else if let error = viewModel.errorMessage {
-                
-                if #available(iOS 17.0, *) {
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .onChange(of: viewModel.selectedAppointmentFilter) { _ in
+
+                Task {
+                    await viewModel.loadAppointments()
+                }
+            }
+
+            Group {
+
+                if viewModel.isLoading {
+
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                } else if let error = viewModel.errorMessage {
+
+                    // Error View
+                       if #available(iOS 17.0, *) {
                     ContentUnavailableView(
                         "Something went wrong",
                         systemImage: "exclamationmark.triangle",
@@ -95,35 +96,35 @@ struct AppointmentView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                
-            } else {
-                
-                ScrollView {
-                    
-                    LazyVStack(spacing: 16) {
-                        
-                        ForEach(viewModel.upcomingAppointments, id: \.id) { appointment in
-                            
-                            AppointmentCard(
-                                appointment: appointment
-                            ) {
-                                
-                                navigationManager.push(
-                                    .appointmentDetails(
-                                        id: appointment.id
+
+                } else {
+
+                    ScrollView {
+
+                        LazyVStack(spacing: 16) {
+
+                            ForEach(viewModel.upcomingAppointments, id: \.id) { appointment in
+
+                                AppointmentCard(
+                                    appointment: appointment
+                                ) {
+
+                                    navigationManager.push(
+                                        .appointmentDetails(
+                                            id: appointment.id
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
+                        .padding()
                     }
-                    .padding()
                 }
-                
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationTitle("Appointments")
         .task {
-            
             await viewModel.loadAppointments()
         }
     }
