@@ -30,8 +30,7 @@ struct MainContainerView: View {
                     AppointmentView(viewModel: dashboardViewModel)
 
                 case .profile:
-//                    ProfileView()
-                    AppointmentView(viewModel: dashboardViewModel)
+                    ProfileView(viewModel: dashboardViewModel)
                 }
             }
 

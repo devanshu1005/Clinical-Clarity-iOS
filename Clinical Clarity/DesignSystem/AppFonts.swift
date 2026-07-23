@@ -3,6 +3,7 @@ import SwiftUI
 extension Font {
     // MARK: - Headings
     static let appTitle = Font.system(size: 28, weight: .bold)           // hero title / onboarding title
+    static let appTitle2 = Font.system(size: 24, weight: .semibold)      // section titles
     static let appSubtitle = Font.system(size: 18, weight: .regular)     // hero subtitle
 
     // MARK: - Body
@@ -14,6 +15,7 @@ extension Font {
     static let appLabel = Font.system(size: 14, weight: .semibold)       // field labels, CTA text
     static let appLabelBold = Font.system(size: 14, weight: .bold)       // "Create your account"
     static let appCaption = Font.system(size: 13, weight: .semibold)     // "Coming Soon"
+    static let appCaptionBold = Font.system(size: 13, weight: .bold)      // badge/chip text
     static let appCaptionSmall = Font.system(size: 12, weight: .semibold) // lock icon
     static let appCaptionMedium = Font.system(size: 12, weight: .medium) // trust text
 
