@@ -15,6 +15,8 @@ struct ProfileView: View {
 
     @EnvironmentObject
     private var authManager: AuthManager
+    
+    @State private var showLogoutConfirmation = false
 
     var body: some View {
 
@@ -64,6 +66,26 @@ struct ProfileView: View {
             }
         }
         .navigationTitle("Profile")
+        .alert(
+            "Logout",
+            isPresented: $showLogoutConfirmation
+        ) {
+
+            Button("Cancel", role: .cancel) { }
+
+            Button("Logout", role: .destructive) {
+
+                authManager.logout()
+
+                navigationManager.reset()
+
+                appFlow.moveToLogin()
+            }
+
+        } message: {
+
+            Text("Are you sure you want to logout?")
+        }
     }
 }
 
@@ -351,12 +373,8 @@ private extension ProfileView {
     var logoutRow: some View {
 
         Button {
-
-            authManager.logout()
             
-            navigationManager.reset()
-
-            appFlow.moveToLogin()
+            showLogoutConfirmation = true
 
         } label: {
 

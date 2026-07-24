@@ -9,6 +9,8 @@ struct DashboardView: View {
 
     @ObservedObject var viewModel: DashboardViewModel
     @EnvironmentObject private var navigationManager: NavigationManager
+    @EnvironmentObject
+    private var authManager: AuthManager
 
     @State private var searchText = ""
 
@@ -79,16 +81,26 @@ private extension DashboardView {
 
         HStack {
 
-            VStack(alignment:.leading,spacing:4){
+            VStack(alignment: .leading, spacing: 4) {
 
-                Text("Good Morning 👋")
-                    .font(.appBody)
-                    .foregroundColor(.textSecondary)
+                         if let name = authManager.currentUser?.name,
+                            !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
 
-                Text("Devanshu")
-                    .font(.appTitle)
-                    .foregroundColor(.brandPrimary)
-            }
+                             Text("Good Morning 👋")
+                                 .font(.appBody)
+                                 .foregroundColor(.textSecondary)
+
+                             Text(name.split(separator: " ").first.map(String.init) ?? name)
+                                 .font(.appTitle)
+                                 .foregroundColor(.brandPrimary)
+
+                         } else {
+
+                             Text("Good Morning 👋")
+                                 .font(.appTitle)
+                                 .foregroundColor(.brandPrimary)
+                         }
+                     }
 
             Spacer()
 
