@@ -37,22 +37,6 @@ final class VerifyOTPViewModel: ObservableObject {
                     endpoint: .verifyOTP,
                     body: body
                 )
-
-//            // Save auth token
-//            UserDefaults.standard.set(
-//                response.data.token,
-//                forKey: "authToken"
-//            )
-//            
-//            UserDefaults.standard.set(
-//                response.data.user.email,
-//                forKey: "userEmail"
-//            )
-//
-//            UserDefaults.standard.set(
-//                response.data.isNewUser,
-//                forKey: "isNewUser"
-//            )
             
             authManager.saveSession(
                 token: response.data.token,

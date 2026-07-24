@@ -62,7 +62,17 @@ struct RootView: View {
                     
                 }
             }
-        }.onReceive(
+        }
+        .task {
+            
+            guard authManager.isLoggedIn,
+                  authManager.currentUser == nil else {
+                return
+            }
+
+            await authManager.loadCurrentUser()
+        }
+        .onReceive(
             NotificationCenter.default.publisher(
                 for: .didLogout
             )

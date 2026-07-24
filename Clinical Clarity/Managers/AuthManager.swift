@@ -42,6 +42,33 @@ class AuthManager: ObservableObject {
         self.isLoggedIn = true
     }
     
+    func loadCurrentUser() async {
+
+        guard token != nil else {
+            return
+        }
+
+        do {
+
+            let response: ProfileResponse =
+                try await APIClient.shared.request(
+                    endpoint: .profile,
+                    requiresAuth: true
+                )
+
+            currentUser = response.data
+
+        } catch {
+
+            print(error)
+
+            if case APIError.unauthorized = error {
+
+                logout()
+            }
+        }
+    }
+    
     // MARK: - Logout
     func logout() {
 
