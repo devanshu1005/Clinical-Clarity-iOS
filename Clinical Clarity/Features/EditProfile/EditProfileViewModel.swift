@@ -13,6 +13,8 @@ import PhotosUI
 @MainActor
 final class EditProfileViewModel: ObservableObject {
     
+    private weak var authManager: AuthManager?
+    
     @Published var selectedPhoto: PhotosPickerItem?
 
     // MARK: - Form Fields
@@ -63,37 +65,18 @@ final class EditProfileViewModel: ObservableObject {
 
     @Published private(set) var profile: UserProfile?
     
-    
-    func loadProfile() async {
+    func configure(authManager: AuthManager) {
 
-        isLoading = true
-        errorMessage = nil
-
-        defer {
-
-            isLoading = false
+        guard self.authManager == nil else {
+            return
         }
 
-        do {
+        self.authManager = authManager
 
-            let response: ProfileResponse =
-                try await APIClient.shared.request(
-                    endpoint: .profile,
-                    requiresAuth: true
-                )
-
-            profile = response.data
-
-            populate(with: response.data)
-
-        } catch {
-
-            errorMessage = error.localizedDescription
-
-            print(error)
+        if let currentUser = authManager.currentUser {
+            populate(with: currentUser)
         }
     }
-    
     
     // MARK: - Populate Form
 
@@ -207,7 +190,7 @@ final class EditProfileViewModel: ObservableObject {
                 requiresAuth: true
             )
 
-            profile = response.data
+            authManager?.currentUser = response.data
 
             populate(with: response.data)
 

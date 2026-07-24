@@ -41,7 +41,7 @@ struct ProfileView: View {
                     Button("Retry") {
 
                         Task {
-                            await viewModel.loadProfile()
+                            await viewModel.loadDashboard()
                         }
                     }
                 }
@@ -77,7 +77,7 @@ private extension ProfileView {
 
             VStack(spacing: 8) {
 
-                Text(viewModel.displayName)
+                Text(authManager.currentUser?.name ?? "")
                     .font(.appTitle)
                     .foregroundColor(.brandPrimary)
 
@@ -88,17 +88,17 @@ private extension ProfileView {
 
                     profileRow(
                         icon: "phone.fill",
-                        text: viewModel.displayPhone
+                        text: authManager.currentUser?.mobileNumber ?? ""
                     )
 
                     profileRow(
                         icon: "envelope.fill",
-                        text: viewModel.displayEmail
+                        text: authManager.currentUser?.email ?? ""
                     )
 
                     profileRow(
                         icon: "location.fill",
-                        text: viewModel.formattedAddress
+                        text: authManager.currentUser?.address.formattedAddress ?? "Address not added"
                     )
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -123,7 +123,9 @@ private extension ProfileView {
 
         ZStack(alignment:.bottomTrailing) {
 
-            AsyncImage(url:viewModel.profileImageURL) { image in
+            AsyncImage(
+                url: URL(string: authManager.currentUser?.profileImage ?? "")
+            ) { image in
 
                 image
                     .resizable()
@@ -163,30 +165,45 @@ private extension ProfileView {
 
     var chips: some View {
 
-            HStack(spacing: 8) {
+        HStack(spacing: 8) {
 
-                if let gender = viewModel.profile?.gender {
-                    chip(title: gender, color: .brandAccentBlue)
-                }
+            if let gender = authManager.currentUser?.gender,
+               !gender.isEmpty {
 
-                if let age = viewModel.profile?.age {
-                    chip(title: "\(age) Years", color: .brandAccentBlue)
-                }
-
-                if let blood = viewModel.profile?.bloodGroup {
-                    chip(title: blood, color: .brandAccentBlue)
-                }
-
-                if !viewModel.isProfileComplete {
-                    chip(
-                        title: "Complete Profile",
-                        color: Color.red.opacity(0.15),
-                        foreground: .red
-                    )
-                }
+                chip(
+                    title: gender,
+                    color: .brandAccentBlue
+                )
             }
-            .frame(maxWidth: .infinity, alignment: .center)
+
+            if let age = authManager.currentUser?.age {
+
+                chip(
+                    title: "\(age) Years",
+                    color: .brandAccentBlue
+                )
+            }
+
+            if let bloodGroup = authManager.currentUser?.bloodGroup,
+               !bloodGroup.isEmpty {
+
+                chip(
+                    title: bloodGroup,
+                    color: .brandAccentBlue
+                )
+            }
+
+            if !(authManager.currentUser?.isProfileComplete ?? false) {
+
+                chip(
+                    title: "Complete Profile",
+                    color: Color.red.opacity(0.15),
+                    foreground: .red
+                )
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
 
     func chip(
         title: String,

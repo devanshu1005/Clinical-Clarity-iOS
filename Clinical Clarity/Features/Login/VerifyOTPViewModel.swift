@@ -54,7 +54,11 @@ final class VerifyOTPViewModel: ObservableObject {
 //                forKey: "isNewUser"
 //            )
             
-            authManager.saveSession(token: response.data.token, email: response.data.user.email, isNewUser: response.data.isNewUser)
+            authManager.saveSession(
+                token: response.data.token,
+                user: response.data.user,
+                isNewUser: response.data.isNewUser
+            )
 
             isLoading = false
 

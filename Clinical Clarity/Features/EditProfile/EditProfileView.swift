@@ -13,6 +13,9 @@ struct EditProfileView: View {
     @Environment(\.dismiss)
     private var dismiss
     
+    @EnvironmentObject
+    private var authManager: AuthManager
+    
     @StateObject
     private var viewModel = EditProfileViewModel()
  
@@ -50,10 +53,7 @@ struct EditProfileView: View {
             }
         }.task {
             
-            if viewModel.profile == nil {
-
-                await viewModel.loadProfile()
-            }
+            viewModel.configure(authManager: authManager)
         }
         .navigationTitle("Edit Profile")
         .navigationBarTitleDisplayMode(.inline)

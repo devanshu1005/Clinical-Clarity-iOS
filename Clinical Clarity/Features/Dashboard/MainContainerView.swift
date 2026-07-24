@@ -42,7 +42,6 @@ struct MainContainerView: View {
             if dashboardViewModel.sections.isEmpty {
 
                 await dashboardViewModel.loadDashboard()
-                await dashboardViewModel.loadProfile()
             }
         }
         .background(Color.appBackground)

@@ -1,10 +1,3 @@
-//
-//  UserAddress.swift
-//  Clinical Clarity
-//
-//  Created by Rakesh Gupta on 23/07/26.
-//
-
 import Foundation
 
 struct UserAddress: Decodable {
@@ -15,4 +8,21 @@ struct UserAddress: Decodable {
     let state: String
     let postalCode: String
     let country: String
+
+    var formattedAddress: String {
+
+        let parts = [
+            line1,
+            line2,
+            city,
+            state,
+            postalCode,
+            country
+        ]
+        .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        return parts.isEmpty
+            ? "Address not added"
+            : parts.joined(separator: ", ")
+    }
 }

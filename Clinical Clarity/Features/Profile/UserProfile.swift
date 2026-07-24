@@ -53,3 +53,15 @@ struct UserProfile: Decodable {
         case updatedAt
     }
 }
+
+extension UserProfile {
+
+    var isProfileComplete: Bool {
+
+        !name.isEmpty &&
+        !mobileNumber.isEmpty &&
+        gender != nil &&
+        age != nil &&
+        bloodGroup != nil
+    }
+}

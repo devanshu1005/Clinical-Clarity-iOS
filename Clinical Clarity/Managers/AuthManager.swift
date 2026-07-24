@@ -6,6 +6,7 @@ class AuthManager: ObservableObject {
     
     @Published var isLoggedIn: Bool = false
     @Published var token: String?
+    @Published var currentUser: UserProfile?
     
     init() {
         loadSession()
@@ -22,31 +23,17 @@ class AuthManager: ObservableObject {
     // MARK: - Save Session
     func saveSession(
         token: String,
-//        profileImage: String?,
-//        name: String?,
-        email: String?,
+        user: UserProfile,
         isNewUser: Bool
-    ) {
+    ){
         UserDefaults.standard.set(token, forKey: "authToken")
+           UserDefaults.standard.set(user.email, forKey: "userEmail")
+           UserDefaults.standard.set(isNewUser, forKey: "isNewUser")
+
+           self.token = token
+           self.currentUser = user
+           self.isLoggedIn = true
         
-        // ✅ Save optional values safely
-//        if let profileImage = profileImage, !profileImage.isEmpty {
-//            UserDefaults.standard.set(profileImage, forKey: "profileImage")
-//        } else {
-//            UserDefaults.standard.removeObject(forKey: "profileImage")
-//        }
-//        
-//        if let name = name, !name.isEmpty {
-//            UserDefaults.standard.set(name, forKey: "userName")
-//        } else {
-//            UserDefaults.standard.removeObject(forKey: "userName")
-//        }
-        
-        if let email = email, !email.isEmpty {
-            UserDefaults.standard.set(email, forKey: "userEmail")
-        } else {
-            UserDefaults.standard.removeObject(forKey: "userEmail")
-        }
         
         UserDefaults.standard.set(isNewUser, forKey: "isNewUser")
         
@@ -57,8 +44,11 @@ class AuthManager: ObservableObject {
     
     // MARK: - Logout
     func logout() {
+
         UserDefaults.standard.removeObject(forKey: "authToken")
+
         token = nil
+        currentUser = nil
         isLoggedIn = false
     }
 }

@@ -21,15 +21,15 @@ struct VerifyOTPResponse: Decodable {
 struct VerifyOTPData: Decodable {
     let token: String
     let isNewUser: Bool
-    let user: VerifyOTPUser
+    let user: UserProfile
 }
 
-struct VerifyOTPUser: Decodable {
-    let id: String
-    let email: String
-
-    enum CodingKeys: String, CodingKey {
-        case id = "_id"
-        case email
-    }
-}
+//struct VerifyOTPUser: Decodable {
+//    let id: String
+//    let email: String
+//
+//    enum CodingKeys: String, CodingKey {
+//        case id = "_id"
+//        case email
+//    }
+//}
